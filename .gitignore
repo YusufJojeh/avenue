@@ -24,3 +24,4 @@ Homestead.yaml
 Thumbs.db
 /database/database.sqlite
 /.claude
+/storage/app/private/product-imports
