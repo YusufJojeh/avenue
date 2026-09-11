@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 44" role="img" aria-label="AVENUE">
+  <defs>
+    <radialGradient id="g1" cx="30%" cy="20%" r="90%">
+      <stop offset="0%" stop-color="#FFF8DC"/>
+      <stop offset="45%" stop-color="#FFD700"/>
+      <stop offset="100%" stop-color="#C08A00"/>
+    </radialGradient>
+    <linearGradient id="t1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#d4af37"/>
+    </linearGradient>
+    <linearGradient id="u1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="rgba(255,255,255,.35)"/>
+      <stop offset="100%" stop-color="rgba(255,215,0,.35)"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(3,3)">
+    <rect x="0" y="0" width="38" height="38" rx="10" fill="url(#g1)"/>
+    <rect x=".5" y=".5" width="37" height="37" rx="9.5" fill="none" stroke="rgba(255,255,255,.35)"/>
+    <text x="19" y="26" text-anchor="middle" font-family="Cinzel, serif" font-weight="700" font-size="20" fill="#111216">A</text>
+  </g>
+  <g transform="translate(52,2)">
+    <text x="0" y="28" font-family="Cinzel, serif" font-weight="700" font-size="24" letter-spacing="6" fill="url(#t1)">AVENUE</text>
+    <rect x="2" y="32" width="178" height="2" rx="1" fill="url(#u1)"/>
+  </g>
+</svg>
+
+

@@ -1,0 +1,97 @@
+/* ===== Ultra Orchid Theme (No React) ===== */
+
+/* خلفية متدرجة خفيفة */
+:root {
+    --glass: rgba(255,255,255,.6);
+    --glass-dark: rgba(17,17,20,.5);
+  }
+
+  html[data-theme="dark"] body {
+    background: radial-gradient(60rem 60rem at 10% -10%, #3b82f620, transparent),
+                radial-gradient(60rem 60rem at 110% 10%, #a855f720, transparent),
+                #0b0c0f;
+  }
+  html[data-theme="light"] body {
+    background: radial-gradient(60rem 60rem at -10% -10%, #60a5fa20, transparent),
+                radial-gradient(60rem 60rem at 110% 10%, #d946ef20, transparent),
+                #f7f7fb;
+  }
+
+  /* بطاقات زجاجية */
+  .card-glass {
+    background: var(--glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 1rem;
+    border: 1px solid rgba(0,0,0,.06);
+    box-shadow: 0 10px 30px rgba(0,0,0,.10);
+  }
+  html[data-theme="dark"] .card-glass {
+    background: var(--glass-dark);
+    border-color: rgba(255,255,255,.06);
+  }
+
+  /* شريط Hero متدرّج */
+  .hero-gradient {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff;
+    border-radius: 1.25rem;
+  }
+
+  /* أزرار متدرجة */
+  .btn-gradient {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff!important;
+    border: 0!important;
+  }
+  .btn-gradient:hover { opacity: .92; }
+
+  /* أنيميشن خفيف */
+  @keyframes floaty {
+    from { transform: translateY(0) }
+    50%  { transform: translateY(-6px) }
+    to   { transform: translateY(0) }
+  }
+  .floaty { animation: floaty 4s ease-in-out infinite; }
+
+  /* Remove blur effects from all select elements in admin screens */
+  select, select *, select option, select optgroup {
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Ensure select elements are crisp and clear in admin */
+  select {
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Remove blur from select dropdowns in admin */
+  select option {
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Remove blur from all form elements in admin */
+  input, textarea, select, button, form {
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Remove blur from Orchid form elements */
+  .form-control, .form-select, .form-input, .form-textarea {
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Remove blur from Orchid select elements specifically */
+  .form-select, .form-select option, .form-select optgroup {
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }

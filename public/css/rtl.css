@@ -1,0 +1,69 @@
+/* Global RTL helpers */
+[dir="rtl"] body {
+  text-align: right;
+}
+
+[dir="rtl"] .text-start { text-align: right !important; }
+[dir="rtl"] .text-end { text-align: left !important; }
+
+[dir="rtl"] .ps-1 { padding-right: 0.25rem !important; padding-left: 0 !important; }
+[dir="rtl"] .ps-2 { padding-right: 0.5rem !important; padding-left: 0 !important; }
+[dir="rtl"] .ps-3 { padding-right: 1rem !important; padding-left: 0 !important; }
+[dir="rtl"] .pe-1 { padding-left: 0.25rem !important; padding-right: 0 !important; }
+[dir="rtl"] .pe-2 { padding-left: 0.5rem !important; padding-right: 0 !important; }
+[dir="rtl"] .pe-3 { padding-left: 1rem !important; padding-right: 0 !important; }
+
+/* Navbar / search */
+[dir="rtl"] .navbar-nav { flex-direction: row-reverse; }
+[dir="rtl"] .amazon-search-wrapper { direction: rtl; }
+[dir="rtl"] .search-icon-left { right: 1rem; left: auto; }
+[dir="rtl"] .amazon-search-input { padding-right: 2.5rem; padding-left: 1rem; text-align: right; }
+[dir="rtl"] .mega-search-dropdown { right: 0; left: auto; }
+[dir="rtl"] .suggestion-item,
+[dir="rtl"] .search-suggestion-item { text-align: right; }
+
+/* Breadcrumbs */
+[dir="rtl"] .breadcrumb-item + .breadcrumb-item::before {
+  transform: scaleX(-1);
+}
+
+/* Premium navbar ordering is handled in layout.css (row-reverse on RTL). */
+
+[dir="rtl"] .premium-top-bar .container {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .premium-top-actions {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .premium-marquee-track {
+  animation-direction: reverse;
+}
+
+[dir="rtl"] .premium-mega-menu {
+  left: auto;
+  right: 0;
+  text-align: right;
+}
+
+[dir="rtl"] .premium-mega-meta {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .premium-mega-item .premium-mega-link::after {
+  transform: scaleX(-1);
+}
+
+/* Footer */
+[dir="rtl"] .footer-link::before {
+  content: '\\2190';
+  left: auto;
+  right: -15px;
+}
+
+[dir="rtl"] .footer-head::after {
+  left: auto;
+  right: 0;
+  background: linear-gradient(270deg, #f0c24b, transparent);
+}

@@ -1,0 +1,749 @@
+/* ===== Crystal Platform Theme for Orchid ===== */
+
+/* Global Platform Variables */
+:root {
+    --crystal-primary: #F0C24B;
+    --crystal-secondary: #D9A92F;
+    --crystal-accent: #6366F1;
+    --crystal-success: #10B981;
+    --crystal-warning: #F59E0B;
+    --crystal-danger: #EF4444;
+    --crystal-info: #3B82F6;
+    
+    --crystal-glass: rgba(255,255,255,0.1);
+    --crystal-glass-strong: rgba(255,255,255,0.15);
+    --crystal-border: rgba(255,255,255,0.2);
+    --crystal-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    --crystal-shadow-hover: 0 20px 40px rgba(0,0,0,0.15);
+    
+    --crystal-radius: 12px;
+    --crystal-radius-lg: 20px;
+    --crystal-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark mode variables */
+html[data-theme="dark"] {
+    --crystal-glass: rgba(255,255,255,0.05);
+    --crystal-glass-strong: rgba(255,255,255,0.08);
+    --crystal-border: rgba(255,255,255,0.1);
+    --crystal-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    --crystal-shadow-hover: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+/* ===== Platform Layout Enhancements ===== */
+
+/* Main platform container */
+.orchid-main {
+    background: var(--bg-grad), var(--bg);
+    min-height: 100vh;
+}
+
+/* Sidebar enhancements */
+.orchid-sidebar {
+    background: linear-gradient(135deg,
+        rgba(255,255,255,0.1) 0%,
+        rgba(255,255,255,0.05) 50%,
+        rgba(255,255,255,0.02) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-right: 1px solid var(--crystal-border);
+    box-shadow: var(--crystal-shadow);
+}
+
+/* Sidebar menu items */
+.orchid-sidebar .nav-link {
+    background: var(--crystal-glass);
+    border: 1px solid var(--crystal-border);
+    border-radius: var(--crystal-radius);
+    margin: 0.25rem 0.5rem;
+    padding: 0.75rem 1rem;
+    color: var(--text);
+    text-decoration: none;
+    transition: var(--crystal-transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.orchid-sidebar .nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255,255,255,0.1),
+        transparent);
+    transition: left 0.6s ease;
+}
+
+.orchid-sidebar .nav-link:hover::before {
+    left: 100%;
+}
+
+.orchid-sidebar .nav-link:hover {
+    background: var(--crystal-glass-strong);
+    border-color: var(--crystal-primary);
+    transform: translateX(5px);
+    box-shadow: var(--crystal-shadow-hover);
+}
+
+.orchid-sidebar .nav-link.active {
+    background: linear-gradient(135deg, var(--crystal-primary), var(--crystal-secondary));
+    color: #111216;
+    border-color: var(--crystal-primary);
+    box-shadow: 0 8px 25px rgba(240,194,75,0.3);
+}
+
+/* Sidebar icons */
+.orchid-sidebar .nav-link i {
+    margin-right: 0.75rem;
+    font-size: 1.1rem;
+    transition: var(--crystal-transition);
+}
+
+.orchid-sidebar .nav-link:hover i {
+    transform: scale(1.1) rotate(5deg);
+}
+
+/* Sidebar titles */
+.orchid-sidebar .nav-title {
+    color: var(--crystal-primary);
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 1.5rem 0.5rem 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--crystal-glass);
+    border-radius: var(--crystal-radius);
+    border: 1px solid var(--crystal-border);
+}
+
+/* ===== Header Enhancements ===== */
+
+/* Platform header */
+.orchid-header {
+    background: linear-gradient(135deg,
+        rgba(255,255,255,0.1) 0%,
+        rgba(255,255,255,0.05) 50%,
+        rgba(255,255,255,0.02) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--crystal-border);
+    box-shadow: var(--crystal-shadow);
+}
+
+/* Header brand/logo */
+.orchid-header .navbar-brand {
+    background: linear-gradient(135deg, var(--crystal-primary), var(--crystal-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+/* Header navigation */
+.orchid-header .nav-link {
+    color: var(--text);
+    padding: 0.5rem 1rem;
+    border-radius: var(--crystal-radius);
+    transition: var(--crystal-transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.orchid-header .nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(240,194,75,0.1),
+        transparent);
+    transition: left 0.6s ease;
+}
+
+.orchid-header .nav-link:hover::before {
+    left: 100%;
+}
+
+.orchid-header .nav-link:hover {
+    background: var(--crystal-glass);
+    color: var(--crystal-primary);
+    transform: translateY(-2px);
+}
+
+/* ===== Content Area Enhancements ===== */
+
+/* Main content area */
+.orchid-content {
+    background: transparent;
+    padding: 2rem;
+}
+
+/* Page headers */
+.orchid-page-header {
+    background: linear-gradient(135deg,
+        rgba(255,255,255,0.1) 0%,
+        rgba(255,255,255,0.05) 50%,
+        rgba(255,255,255,0.02) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--crystal-border);
+    border-radius: var(--crystal-radius-lg);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--crystal-shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+.orchid-page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255,255,255,0.1),
+        transparent);
+    transition: left 0.6s ease;
+}
+
+.orchid-page-header:hover::before {
+    left: 100%;
+}
+
+.orchid-page-header h1 {
+    background: linear-gradient(135deg, var(--crystal-primary), var(--crystal-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.orchid-page-header p {
+    color: var(--muted);
+    margin-bottom: 0;
+}
+
+/* ===== Card Enhancements ===== */
+
+/* Platform cards */
+.orchid-card {
+    background: linear-gradient(135deg,
+        rgba(255,255,255,0.1) 0%,
+        rgba(255,255,255,0.05) 50%,
+        rgba(255,255,255,0.02) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--crystal-border);
+    border-radius: var(--crystal-radius-lg);
+    box-shadow: var(--crystal-shadow);
+    transition: var(--crystal-transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.orchid-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255,255,255,0.1),
+        transparent);
+    transition: left 0.6s ease;
+}
+
+.orchid-card:hover::before {
+    left: 100%;
+}
+
+.orchid-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: var(--crystal-shadow-hover);
+    border-color: var(--crystal-primary);
+}
+
+/* Card headers */
+.orchid-card .card-header {
+    background: transparent;
+    border-bottom: 1px solid var(--crystal-border);
+    padding: 1.5rem;
+}
+
+.orchid-card .card-title {
+    color: var(--text);
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+/* Card body */
+.orchid-card .card-body {
+    padding: 1.5rem;
+}
+
+/* ===== Button Enhancements ===== */
+
+/* Crystal buttons */
+.btn-crystal {
+    background: linear-gradient(135deg, var(--crystal-primary), var(--crystal-secondary));
+    color: #111216 !important;
+    border: none;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--crystal-radius);
+    box-shadow: 0 8px 25px rgba(240,194,75,0.3);
+    transition: var(--crystal-transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-crystal::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255,255,255,0.2),
+        transparent);
+    transition: left 0.6s ease;
+}
+
+.btn-crystal:hover::before {
+    left: 100%;
+}
+
+.btn-crystal:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(240,194,75,0.4);
+    background: linear-gradient(135deg, var(--crystal-primary), var(--crystal-secondary));
+    color: #111216 !important;
+}
+
+/* Glass buttons */
+.btn-glass {
+    background: var(--crystal-glass);
+    color: var(--text);
+    border: 1px solid var(--crystal-border);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--crystal-radius);
+    transition: var(--crystal-transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-glass::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255,255,255,0.1),
+        transparent);
+    transition: left 0.6s ease;
+}
+
+.btn-glass:hover::before {
+    left: 100%;
+}
+
+.btn-glass:hover {
+    background: var(--crystal-glass-strong);
+    border-color: var(--crystal-primary);
+    transform: translateY(-2px);
+    color: var(--text);
+}
+
+/* ===== Form Enhancements ===== */
+
+/* Form controls */
+.form-control, .form-select {
+    background: var(--crystal-glass);
+    border: 1px solid var(--crystal-border);
+    border-radius: var(--crystal-radius);
+    color: var(--text);
+    transition: var(--crystal-transition);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.form-control:focus, .form-select:focus {
+    background: var(--crystal-glass-strong);
+    border-color: var(--crystal-primary);
+    box-shadow: 0 0 0 0.2rem rgba(240,194,75,0.25);
+    color: var(--text);
+}
+
+.form-control::placeholder {
+    color: var(--muted);
+}
+
+/* Form labels */
+.form-label {
+    color: var(--text);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+/* ===== Table Enhancements ===== */
+
+/* Platform tables */
+.table {
+    background: var(--crystal-glass);
+    border-radius: var(--crystal-radius);
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.table thead th {
+    background: var(--crystal-glass-strong);
+    border-bottom: 1px solid var(--crystal-border);
+    color: var(--text);
+    font-weight: 600;
+    padding: 1rem;
+}
+
+.table tbody tr {
+    transition: var(--crystal-transition);
+}
+
+.table tbody tr:hover {
+    background: var(--crystal-glass-strong);
+    transform: scale(1.01);
+}
+
+.table tbody td {
+    border-bottom: 1px solid var(--crystal-border);
+    padding: 1rem;
+    color: var(--text);
+}
+
+/* ===== Alert Enhancements ===== */
+
+/* Crystal alerts */
+.alert-crystal {
+    background: linear-gradient(135deg,
+        rgba(255,255,255,0.1) 0%,
+        rgba(255,255,255,0.05) 50%,
+        rgba(255,255,255,0.02) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--crystal-border);
+    border-radius: var(--crystal-radius);
+    color: var(--text);
+    padding: 1rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.alert-crystal::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255,255,255,0.1),
+        transparent);
+    transition: left 0.6s ease;
+}
+
+.alert-crystal:hover::before {
+    left: 100%;
+}
+
+.alert-success {
+    border-left: 4px solid var(--crystal-success);
+}
+
+.alert-warning {
+    border-left: 4px solid var(--crystal-warning);
+}
+
+.alert-danger {
+    border-left: 4px solid var(--crystal-danger);
+}
+
+.alert-info {
+    border-left: 4px solid var(--crystal-info);
+}
+
+/* ===== Badge Enhancements ===== */
+
+/* Crystal badges */
+.badge-crystal {
+    background: linear-gradient(135deg, var(--crystal-primary), var(--crystal-secondary));
+    color: #111216;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: var(--crystal-radius);
+    box-shadow: 0 4px 15px rgba(240,194,75,0.3);
+    transition: var(--crystal-transition);
+}
+
+.badge-crystal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(240,194,75,0.4);
+}
+
+/* ===== Modal Enhancements ===== */
+
+/* Crystal modals */
+.modal-content {
+    background: linear-gradient(135deg,
+        rgba(255,255,255,0.1) 0%,
+        rgba(255,255,255,0.05) 50%,
+        rgba(255,255,255,0.02) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--crystal-border);
+    border-radius: var(--crystal-radius-lg);
+    box-shadow: var(--crystal-shadow-hover);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--crystal-border);
+    background: transparent;
+}
+
+.modal-title {
+    color: var(--text);
+    font-weight: 600;
+}
+
+.modal-body {
+    color: var(--text);
+}
+
+.modal-footer {
+    border-top: 1px solid var(--crystal-border);
+    background: transparent;
+}
+
+/* ===== Loading States ===== */
+
+/* Crystal loading spinner */
+.crystal-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--crystal-glass);
+    border-top: 3px solid var(--crystal-primary);
+    border-radius: 50%;
+    animation: crystalSpin 1s linear infinite;
+}
+
+@keyframes crystalSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ===== Animations ===== */
+
+/* Fade in animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Scale in animation */
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.scale-in {
+    animation: scaleIn 0.6s ease-out;
+}
+
+/* ===== Responsive Design ===== */
+
+@media (max-width: 768px) {
+    .orchid-content {
+        padding: 1rem;
+    }
+    
+    .orchid-page-header {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .orchid-card {
+        margin-bottom: 1rem;
+    }
+    
+    .btn-crystal, .btn-glass {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* ===== Utility Classes ===== */
+
+.crystal-text-gradient {
+    background: linear-gradient(135deg, var(--crystal-primary), var(--crystal-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.crystal-bg-gradient {
+    background: linear-gradient(135deg, var(--crystal-primary), var(--crystal-secondary));
+}
+
+.crystal-border-gradient {
+    border: 2px solid;
+    border-image: linear-gradient(135deg, var(--crystal-primary), var(--crystal-secondary)) 1;
+}
+
+.crystal-shadow {
+    box-shadow: var(--crystal-shadow);
+}
+
+.crystal-shadow-hover {
+    box-shadow: var(--crystal-shadow-hover);
+}
+
+/* ===== Hover Effects ===== */
+
+.hover-lift {
+    transition: var(--crystal-transition);
+}
+
+.hover-lift:hover {
+    transform: translateY(-5px);
+}
+
+.hover-scale {
+    transition: var(--crystal-transition);
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+
+.hover-glow {
+    transition: var(--crystal-transition);
+}
+
+.hover-glow:hover {
+    box-shadow: 0 0 30px rgba(240,194,75,0.3);
+}
+
+/* ===== Custom Scrollbar ===== */
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--crystal-glass);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--crystal-primary), var(--crystal-secondary));
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--crystal-secondary), var(--crystal-primary));
+}
+
+/* ===== Remove Blur Effects from Select Elements ===== */
+
+/* Remove blur effects from all select elements in admin screens */
+select, select *, select option, select optgroup {
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Ensure select elements are crisp and clear in admin */
+select {
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Remove blur from select dropdowns in admin */
+select option {
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Remove blur from all form elements in admin */
+input, textarea, select, button, form {
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Remove blur from Orchid form elements */
+.form-control, .form-select, .form-input, .form-textarea {
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Remove blur from Orchid select elements specifically */
+.form-select, .form-select option, .form-select optgroup {
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Override any existing blur effects on form controls */
+.form-control, .form-select {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Ensure dropdown options are clear */
+select option, .form-select option {
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: var(--crystal-glass) !important;
+}

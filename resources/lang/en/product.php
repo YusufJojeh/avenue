@@ -1,0 +1,71 @@
+<?php
+
+return [
+    'titles' => [
+        'create' => 'Create Product',
+        'edit' => 'Edit Product',
+    ],
+    'fields' => [
+        'category_id' => 'Category',
+        'brand_id' => 'Brand',
+        'name' => 'Name',
+        'slug' => 'Slug',
+        'sku' => 'SKU',
+        'price' => 'Price',
+        'sale_price' => 'Sale Price',
+        'stock_qty' => 'Stock Quantity',
+        'is_featured' => 'Featured',
+        'is_active' => 'Active',
+        'published_at' => 'Published At',
+        'short_description' => 'Short Description',
+        'description' => 'Description',
+    ],
+    'help' => [
+        'slug' => 'Unique URL identifier',
+        'sale_price' => 'Leave empty if no sale',
+        'stock_qty' => 'Leave empty for unlimited',
+    ],
+    'sections' => [
+        'basic_info' => 'Basic Information',
+        'description' => 'Description',
+        'images' => 'Images',
+        'add_image' => 'Add New Image',
+    ],
+    'image_fields' => [
+        'file' => 'Image File',
+        'alt' => 'Alt (optional)',
+        'is_primary' => 'Primary?',
+        'sort_order' => 'Order',
+    ],
+    'image_help' => 'Upload image (JPG/PNG/WebP). Max 5MB',
+    'table_columns' => [
+        'preview' => 'Preview',
+        'alt' => 'Alt',
+        'primary' => 'Primary',
+        'order' => 'Order',
+        'actions' => 'Actions',
+    ],
+    'image_actions' => [
+        'set_primary' => 'Set Primary',
+        'delete' => 'Delete',
+        'confirm_delete' => 'Delete this image?',
+    ],
+    'actions' => [
+        'save' => 'Save',
+        'remove' => 'Remove',
+        'confirm_remove' => 'Delete this product?',
+        'add_image' => 'Add Image',
+    ],
+    'toast' => [
+        'saved' => 'Saved.',
+        'deleted' => 'Deleted.',
+        'delete_failed' => 'Cannot delete: :error',
+        'image_added' => 'Image added.',
+        'image_deleted' => 'Image deleted.',
+        'image_delete_failed' => 'Cannot delete image: :error',
+        'primary_updated' => 'Primary image updated.',
+        'primary_update_failed' => 'Cannot update primary image: :error',
+        'upload_failed' => 'Image upload failed: :error',
+    ],
+    'no_image' => 'No image',
+];

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="72" height="72" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AVENUE">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f7d86d"/>
+      <stop offset="0.65" stop-color="#e2b93e"/>
+      <stop offset="1" stop-color="#b8851d"/>
+    </linearGradient>
+    <filter id="s" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <rect x="10" y="10" width="52" height="52" rx="14" fill="url(#g)" filter="url(#s)"/>
+  <path d="M36 20 L48 52 H43.2 L40.8 45.2 H31.2 L28.8 52 H24 L36 20 Z M36 28.2 L33.2 36.6 H38.8 L36 28.2 Z"
+        fill="#17130b"/>
+</svg>
+

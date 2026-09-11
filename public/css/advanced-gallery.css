@@ -1,0 +1,647 @@
+/* ===== Advanced Image Gallery System ===== */
+
+/* === Gallery Container === */
+.advanced-gallery {
+  position: relative;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-md);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--shadow-light);
+  overflow: hidden;
+}
+
+/* === Main Image Container === */
+.gallery-main-container {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--surface-glass);
+  cursor: zoom-in;
+  user-select: none;
+}
+
+.gallery-main-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+  transform-origin: center center;
+}
+
+/* === Zoom States === */
+.gallery-main-container.zoom-active {
+  cursor: grab;
+}
+
+.gallery-main-container.zoom-active:active {
+  cursor: grabbing;
+}
+
+.gallery-main-container.zoom-2x .gallery-main-image {
+  transform: scale(2);
+}
+
+.gallery-main-container.zoom-3x .gallery-main-image {
+  transform: scale(3);
+}
+
+.gallery-main-container.zoom-4x .gallery-main-image {
+  transform: scale(4);
+}
+
+/* === Zoom Controls === */
+.gallery-zoom-controls {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  z-index: 10;
+}
+
+.zoom-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur-light);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-light);
+}
+
+.zoom-btn:hover {
+  background: var(--primary-gold);
+  color: var(--text-primary);
+  transform: scale(1.1);
+}
+
+.zoom-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* === Thumbnail Grid === */
+.gallery-thumbnails {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+  max-height: 120px;
+  overflow-y: auto;
+  padding: var(--space-xs);
+}
+
+.gallery-thumbnail {
+  width: 100%;
+  height: 80px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  border: 2px solid transparent;
+  position: relative;
+}
+
+.gallery-thumbnail:hover {
+  transform: scale(1.05);
+  border-color: var(--primary-gold);
+}
+
+.gallery-thumbnail.active {
+  border-color: var(--primary-gold);
+  box-shadow: 0 0 0 2px rgba(240,194,75,0.3);
+}
+
+/* === 360° View Container === */
+.gallery-360-container {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--surface-glass);
+  cursor: grab;
+  user-select: none;
+}
+
+.gallery-360-container:active {
+  cursor: grabbing;
+}
+
+.gallery-360-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+  transform-origin: center center;
+}
+
+/* === 360° Controls === */
+.gallery-360-controls {
+  position: absolute;
+  bottom: var(--space-md);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur-light);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: 25px;
+  box-shadow: var(--shadow-light);
+}
+
+.rotate-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: var(--primary-gold);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.rotate-btn:hover {
+  background: var(--secondary-gold);
+  transform: scale(1.1);
+}
+
+.rotate-indicator {
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  min-width: 40px;
+  text-align: center;
+}
+
+/* === Video Player === */
+.gallery-video-container {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--surface-glass);
+}
+
+.gallery-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  padding: var(--space-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.video-play-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  background: var(--primary-gold);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  font-size: 1.2rem;
+}
+
+.video-play-btn:hover {
+  background: var(--secondary-gold);
+  transform: scale(1.1);
+}
+
+.video-progress {
+  flex: 1;
+  height: 4px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 2px;
+  position: relative;
+  cursor: pointer;
+}
+
+.video-progress-bar {
+  height: 100%;
+  background: var(--primary-gold);
+  border-radius: 2px;
+  transition: width var(--transition-fast);
+}
+
+.video-time {
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  min-width: 80px;
+  text-align: right;
+}
+
+/* === Image Comparison === */
+.gallery-comparison {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--surface-glass);
+  cursor: col-resize;
+}
+
+.comparison-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.comparison-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.comparison-image.before {
+  z-index: 1;
+}
+
+.comparison-image.after {
+  z-index: 2;
+  clip-path: polygon(50% 0%, 100% 0%, 100% 100%, 50% 100%);
+}
+
+.comparison-slider {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 2px;
+  height: 100%;
+  background: var(--primary-gold);
+  z-index: 3;
+  transform: translateX(-50%);
+}
+
+.comparison-handle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  background: var(--primary-gold);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  box-shadow: var(--shadow-light);
+}
+
+.comparison-handle:active {
+  cursor: grabbing;
+}
+
+.comparison-handle::before,
+.comparison-handle::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+}
+
+.comparison-handle::before {
+  left: -12px;
+  border-right-color: var(--text-primary);
+}
+
+.comparison-handle::after {
+  right: -12px;
+  border-left-color: var(--text-primary);
+}
+
+/* === Gallery Navigation === */
+.gallery-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur-light);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-light);
+  z-index: 10;
+}
+
+.gallery-nav:hover {
+  background: var(--primary-gold);
+  color: var(--text-primary);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.gallery-nav.prev {
+  left: var(--space-md);
+}
+
+.gallery-nav.next {
+  right: var(--space-md);
+}
+
+.gallery-nav:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: translateY(-50%);
+}
+
+/* === Gallery Modes === */
+.gallery-mode-selector {
+  position: absolute;
+  top: var(--space-md);
+  left: var(--space-md);
+  display: flex;
+  gap: var(--space-xs);
+  z-index: 10;
+}
+
+.mode-btn {
+  padding: var(--space-sm) var(--space-md);
+  border: none;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur-light);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.mode-btn:hover {
+  background: var(--primary-gold);
+  color: var(--text-primary);
+}
+
+.mode-btn.active {
+  background: var(--primary-gold);
+  color: var(--text-primary);
+}
+
+/* === Fullscreen Lightbox === */
+.gallery-lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.95);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.gallery-lightbox.active {
+  display: flex;
+}
+
+.lightbox-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+.lightbox-close {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur-light);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  font-size: 1.2rem;
+}
+
+.lightbox-close:hover {
+  background: var(--primary-gold);
+  color: var(--text-primary);
+  transform: scale(1.1);
+}
+
+/* === Touch Gestures for Mobile === */
+@media (max-width: 768px) {
+  .gallery-main-container {
+    height: 400px;
+  }
+  
+  .gallery-360-container {
+    height: 400px;
+  }
+  
+  .gallery-video-container {
+    height: 400px;
+  }
+  
+  .gallery-comparison {
+    height: 400px;
+  }
+  
+  .gallery-thumbnails {
+    grid-template-columns: repeat(4, 1fr);
+    max-height: 100px;
+  }
+  
+  .gallery-thumbnail {
+    height: 60px;
+  }
+  
+  .gallery-zoom-controls {
+    top: var(--space-sm);
+    right: var(--space-sm);
+  }
+  
+  .zoom-btn {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .gallery-nav {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .gallery-mode-selector {
+    top: var(--space-sm);
+    left: var(--space-sm);
+  }
+  
+  .mode-btn {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: 0.7rem;
+  }
+}
+
+/* === Loading States === */
+.gallery-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--surface-glass);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+}
+
+.gallery-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--glass-border);
+  border-top: 3px solid var(--primary-gold);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* === Error States === */
+.gallery-error {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--surface-glass);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  z-index: 5;
+}
+
+.gallery-error-icon {
+  font-size: 3rem;
+  margin-bottom: var(--space-md);
+  opacity: 0.5;
+}
+
+.gallery-error-message {
+  font-size: 1rem;
+  text-align: center;
+  max-width: 200px;
+}
+
+/* === Accessibility === */
+.gallery-main-container:focus {
+  outline: 2px solid var(--primary-gold);
+  outline-offset: 2px;
+}
+
+.zoom-btn:focus,
+.mode-btn:focus,
+.gallery-nav:focus,
+.lightbox-close:focus {
+  outline: 2px solid var(--primary-gold);
+  outline-offset: 2px;
+}
+
+/* === High Contrast Mode === */
+@media (prefers-contrast: high) {
+  .gallery-main-container {
+    border: 2px solid var(--text-primary);
+  }
+  
+  .gallery-thumbnail.active {
+    border-width: 3px;
+  }
+  
+  .zoom-btn,
+  .mode-btn,
+  .gallery-nav {
+    border: 2px solid var(--text-primary);
+  }
+}
+
+/* === Reduced Motion === */
+@media (prefers-reduced-motion: reduce) {
+  .gallery-main-image,
+  .gallery-360-image,
+  .gallery-thumbnail,
+  .zoom-btn,
+  .mode-btn,
+  .gallery-nav {
+    transition: none;
+  }
+  
+  .gallery-spinner {
+    animation: none;
+  }
+}
