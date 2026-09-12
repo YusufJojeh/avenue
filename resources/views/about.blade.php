@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'About Us - ' . ($siteName ?? 'MyStore'))
+@section('title', __('common.pages.about_us') . ' - ' . ($siteName ?? 'MyStore'))
 
 @push('styles')
 @include('partials.unified-styles')
@@ -144,7 +144,7 @@
 {{-- About Header --}}
 <div class="container py-4">
   <div class="page-header text-center mb-5">
-    <h1 class="page-title">About {{ $siteName ?? 'MyStore' }}</h1>
+    <h1 class="page-title">{{ __('common.nav.about') }} {{ $siteName ?? 'MyStore' }}</h1>
     <p class="page-subtitle text-muted">
       {{ __('common.messages.passionate_about_delivering') }}
     </p>
@@ -162,18 +162,13 @@
           </div>
         @else
           <p class="story-text">
-            {{ __('common.messages.founded_with_vision') }}
-            What started as a small local business has grown into a trusted destination for quality products and exceptional service.
+            {{ __('common.pages.founded_with_vision') }}
           </p>
           <p class="story-text">
-            Our journey began with a simple belief: that every customer deserves access to premium products at fair prices,
-            backed by outstanding customer support. Today, we continue to uphold these values while embracing new technologies
-            and expanding our product offerings to meet the evolving needs of our community.
+            {{ __('common.pages.journey_began') }}
           </p>
           <p class="story-text">
-            We're not just selling products; we're building relationships, fostering trust, and creating experiences that
-            make a difference in our customers' lives. Every decision we make is guided by our commitment to excellence
-            and our passion for customer satisfaction.
+            {{ __('common.pages.not_just_selling') }}
           </p>
         @endif
       </div>
@@ -184,7 +179,7 @@
 {{-- Our Values --}}
 <section class="py-5 reveal">
   <div class="container">
-    <h2 class="section-title">Our Values</h2>
+    <h2 class="section-title">{{ __('common.pages.our_values') }}</h2>
     <div class="row g-4">
       <div class="col-md-6 col-lg-3">
         <div class="value-card">
@@ -193,9 +188,9 @@
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
             </svg>
           </div>
-          <h3 class="value-title">Quality</h3>
+          <h3 class="value-title">{{ __('common.pages.quality') }}</h3>
           <p class="value-description">
-            We never compromise on quality. Every product in our catalog meets our high standards for excellence.
+            {{ __('common.pages.we_never_compromise') }}
           </p>
         </div>
       </div>
@@ -206,9 +201,9 @@
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
             </svg>
           </div>
-          <h3 class="value-title">Trust</h3>
+          <h3 class="value-title">{{ __('common.pages.trust') }}</h3>
           <p class="value-description">
-            Building lasting relationships through transparency, honesty, and reliable service.
+            {{ __('common.pages.building_lasting_relationships') }}
           </p>
         </div>
       </div>
@@ -219,9 +214,9 @@
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
             </svg>
           </div>
-          <h3 class="value-title">Innovation</h3>
+          <h3 class="value-title">{{ __('common.pages.innovation') }}</h3>
           <p class="value-description">
-            Continuously improving our platform and services to provide the best possible experience.
+            {{ __('common.pages.continuously_improving') }}
           </p>
         </div>
       </div>
@@ -232,9 +227,9 @@
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
             </svg>
           </div>
-          <h3 class="value-title">Customer First</h3>
+          <h3 class="value-title">{{ __('common.pages.customer_first') }}</h3>
           <p class="value-description">
-            Every decision we make is guided by what's best for our customers.
+            {{ __('common.pages.every_decision_guided') }}
           </p>
         </div>
       </div>
@@ -249,25 +244,25 @@
       <div class="col-md-3 col-6">
         <div class="stat-item">
           <div class="stat-number">1000+</div>
-          <div class="stat-label">Happy Customers</div>
+          <div class="stat-label">{{ __('common.pages.happy_customers') }}</div>
         </div>
       </div>
       <div class="col-md-3 col-6">
         <div class="stat-item">
           <div class="stat-number">500+</div>
-          <div class="stat-label">Products</div>
+          <div class="stat-label">{{ __('common.nav.products') }}</div>
         </div>
       </div>
       <div class="col-md-3 col-6">
         <div class="stat-item">
           <div class="stat-number">50+</div>
-          <div class="stat-label">Brands</div>
+          <div class="stat-label">{{ __('common.pages.brands') }}</div>
         </div>
       </div>
       <div class="col-md-3 col-6">
         <div class="stat-item">
           <div class="stat-number">24/7</div>
-          <div class="stat-label">Support</div>
+          <div class="stat-label">{{ __('common.pages.support') }}</div>
         </div>
       </div>
     </div>
@@ -277,35 +272,35 @@
 {{-- Our Team --}}
 <section class="py-5 reveal">
   <div class="container">
-    <h2 class="section-title">Meet Our Team</h2>
+    <h2 class="section-title">{{ __('common.pages.meet_our_team') }}</h2>
     <div class="row g-4">
       <div class="col-md-6 col-lg-4">
         <div class="team-card">
           <div class="team-avatar">👨‍💼</div>
-          <h3 class="team-name">John Smith</h3>
-          <div class="team-role">Founder & CEO</div>
+          <h3 class="team-name">{{ __('common.pages.john_smith') }}</h3>
+          <div class="team-role">{{ __('common.pages.founder_ceo') }}</div>
           <p class="team-bio">
-            Visionary leader with over 15 years of experience in e-commerce and digital innovation.
+            {{ __('common.pages.visionary_leader') }}
           </p>
         </div>
       </div>
       <div class="col-md-6 col-lg-4">
         <div class="team-card">
           <div class="team-avatar">👩‍💻</div>
-          <h3 class="team-name">Sarah Johnson</h3>
-          <div class="team-role">Head of Technology</div>
+          <h3 class="team-name">{{ __('common.pages.sarah_johnson') }}</h3>
+          <div class="team-role">{{ __('common.pages.head_technology') }}</div>
           <p class="team-bio">
-            Tech enthusiast driving our digital transformation and platform development.
+            {{ __('common.pages.tech_enthusiast') }}
           </p>
         </div>
       </div>
       <div class="col-md-6 col-lg-4">
         <div class="team-card">
           <div class="team-avatar">👨‍🎨</div>
-          <h3 class="team-name">Mike Chen</h3>
-          <div class="team-role">Creative Director</div>
+          <h3 class="team-name">{{ __('common.pages.mike_chen') }}</h3>
+          <div class="team-role">{{ __('common.pages.creative_director') }}</div>
           <p class="team-bio">
-            Creative mind behind our brand identity and customer experience design.
+            {{ __('common.pages.creative_mind') }}
           </p>
         </div>
       </div>
@@ -316,13 +311,13 @@
 {{-- Call to Action --}}
 <section class="cta-section reveal">
   <div class="container position-relative">
-    <h2 class="cta-title">Ready to Experience the Difference?</h2>
+    <h2 class="cta-title">{{ __('common.pages.ready_to_experience') }}</h2>
     <p class="cta-text">
       {{ __('common.messages.join_thousands_satisfied') }}
     </p>
     <div class="d-flex gap-3 justify-content-center flex-wrap">
       <a href="{{ route('products.index') }}" class="btn btn-enhanced btn-lg px-5 py-3">
-        Shop Now
+        {{ __('common.actions.shop_now') }}
         <i class="ms-2">→</i>
       </a>
       <a href="{{ route('contact') }}" class="btn btn-vel-outline btn-lg px-5 py-3">

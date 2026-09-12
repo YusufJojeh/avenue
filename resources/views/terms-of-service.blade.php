@@ -1,37 +1,37 @@
 @extends('layouts.app')
 
-@section('title', 'Terms of Service')
+@section('title', __('common.pages.terms_of_service'))
 
 @section('content')
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="crystal-card p-4">
-                <h1 class="h2 mb-4">Terms of Service</h1>
+                <h1 class="h2 mb-4">{{ __('common.pages.terms_of_service') }}</h1>
 
                 <div class="content">
                     @if(isset($settings['content.terms']) && $settings['content.terms'])
                         {!! $settings['content.terms'] !!}
                     @else
-                        <p class="lead">Please read these terms of service carefully before using our website.</p>
+                        <p class="lead">{{ __('common.pages.terms_intro') }}</p>
 
-                        <h3>Acceptance of Terms</h3>
-                        <p>By accessing and using this website, you accept and agree to be bound by the terms and provision of this agreement.</p>
+                        <h3>{{ __('common.pages.terms_acceptance_title') }}</h3>
+                        <p>{{ __('common.pages.terms_acceptance_body') }}</p>
 
-                        <h3>Use License</h3>
-                        <p>Permission is granted to temporarily download one copy of the materials on our website for personal, non-commercial transitory viewing only.</p>
+                        <h3>{{ __('common.pages.terms_license_title') }}</h3>
+                        <p>{{ __('common.pages.terms_license_body') }}</p>
 
-                        <h3>Disclaimer</h3>
-                        <p>The materials on our website are provided on an 'as is' basis. We make no warranties, expressed or implied.</p>
+                        <h3>{{ __('common.pages.terms_disclaimer_title') }}</h3>
+                        <p>{{ __('common.pages.terms_disclaimer_body') }}</p>
 
-                        <h3>Limitations</h3>
-                        <p>In no event shall our company or its suppliers be liable for any damages arising out of the use or inability to use the materials on our website.</p>
+                        <h3>{{ __('common.pages.terms_limitations_title') }}</h3>
+                        <p>{{ __('common.pages.terms_limitations_body') }}</p>
 
-                        <h3>Governing Law</h3>
-                        <p>These terms and conditions are governed by and construed in accordance with the laws of the jurisdiction in which we operate.</p>
+                        <h3>{{ __('common.pages.terms_governing_law_title') }}</h3>
+                        <p>{{ __('common.pages.terms_governing_law_body') }}</p>
 
-                        <h3>Contact Information</h3>
-                        <p>If you have any questions about these terms of service, please contact us.</p>
+                        <h3>{{ __('common.pages.terms_contact_title') }}</h3>
+                        <p>{{ __('common.pages.terms_contact_body') }}</p>
                     @endif
                 </div>
             </div>

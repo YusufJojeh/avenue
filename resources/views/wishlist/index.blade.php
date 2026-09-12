@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'My Wishlist')
+@section('title', __('common.pages.my_wishlist') . ' - ' . ($siteName ?? 'MyStore'))
 @section('meta_robots', 'noindex, follow')
 @section('canonical', route('wishlist.index'))
 
@@ -186,21 +186,21 @@
 
   {{-- Hero --}}
   <div class="wishlist-hero">
-    <h1>My Wishlist</h1>
-    <p>Your favorite products saved for later. Share your wishlist with friends and family!</p>
+    <h1>{{ __('common.pages.my_wishlist') }}</h1>
+    <p>{{ __('common.pages.your_favorite_products') }}</p>
   </div>
 
   {{-- Wishlist Actions --}}
   <div class="wishlist-actions">
     <div class="wishlist-count">
-      You have <strong id="wishlistCount">0</strong> items in your wishlist
+      {!! str_replace(':count', '<strong id="wishlistCount">0</strong>', __('common.pages.you_have_items_count')) !!}
     </div>
     <div class="wishlist-buttons">
       <button type="button" class="btn-wishlist" id="clearWishlistBtn">
-        <i class="fas fa-trash"></i> Clear All
+        <i class="fas fa-trash"></i> {{ __('common.pages.clear_all') }}
       </button>
       <button type="button" class="btn-whatsapp" id="shareWishlistBtn">
-        <i class="fab fa-whatsapp"></i> Order via WhatsApp
+        <i class="fab fa-whatsapp"></i> {{ __('common.actions.order_via_whatsapp') }}
       </button>
     </div>
   </div>
@@ -211,15 +211,15 @@
   {{-- Empty State --}}
   <div class="empty-wishlist" id="emptyWishlist" style="display: none;">
     <div class="empty-wishlist-icon">💔</div>
-    <h3>Your wishlist is empty</h3>
-    <p>Start adding products to your wishlist by clicking the heart icon on any product card.</p>
+    <h3>{{ __('common.pages.your_wishlist_empty') }}</h3>
+    <p>{{ __('common.pages.start_adding_products') }}</p>
     <a href="{{ route('products.index') }}" class="btn btn-vel-gold">
-      <i class="fas fa-shopping-bag me-2"></i>Browse Products
+      <i class="fas fa-shopping-bag me-2"></i>{{ __('common.actions.browse_products') }}
     </a>
   </div>
 
   {{-- Toast --}}
-  <div id="toast">Link copied to clipboard!</div>
+  <div id="toast">{{ __('common.toast.link_copied') }}</div>
 
 </div>
 @endsection
@@ -227,6 +227,15 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+  const I18N = {
+    view: @json(__('common.actions.view')),
+    orderViaWhatsapp: @json(__('common.actions.order_via_whatsapp')),
+    remove: @json(__('common.actions.remove')),
+    linkCopied: @json(__('common.toast.link_copied')),
+    copyFailed: @json(__('common.toast.copy_failed')),
+    confirmClearWishlist: @json(__('common.messages.confirm_clear_wishlist')),
+    wishlistEmpty: @json(__('common.pages.your_wishlist_empty')),
+  };
   const WISHLIST_STORAGE_KEY = 'wishlist_items_v1';
   const SITE_WHATSAPP_NUMBER = window.SITE_WHATSAPP_NUMBER || '15551234567';
 
@@ -279,9 +288,9 @@ document.addEventListener('DOMContentLoaded', function() {
             <h5 class="product-name">${item.name}</h5>
             <div class="price-section">${priceHtml}</div>
             <div class="product-actions">
-              <a href="${item.url}" class="icon-btn" title="View"><i class="fas fa-eye"></i></a>
-              <a href="https://wa.me/${SITE_WHATSAPP_NUMBER}?text=${waMsg}" target="_blank" class="icon-btn" title="Order via WhatsApp" style="color:#25d366;"><i class="fab fa-whatsapp"></i></a>
-              <button type="button" class="icon-btn remove-from-wishlist" data-product-id="${item.id}" title="Remove">
+              <a href="${item.url}" class="icon-btn" title="${I18N.view}"><i class="fas fa-eye"></i></a>
+              <a href="https://wa.me/${SITE_WHATSAPP_NUMBER}?text=${waMsg}" target="_blank" class="icon-btn" title="${I18N.orderViaWhatsapp}" style="color:#25d366;"><i class="fab fa-whatsapp"></i></a>
+              <button type="button" class="icon-btn remove-from-wishlist" data-product-id="${item.id}" title="${I18N.remove}">
                 <i class="fas fa-trash"></i>
               </button>
             </div>
@@ -299,8 +308,8 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.copy-link').forEach(btn => {
       btn.addEventListener('click', function() {
         navigator.clipboard.writeText(this.dataset.url)
-          .then(() => showToast('Link copied to clipboard!'))
-          .catch(() => showToast('Failed to copy link.'));
+          .then(() => showToast(I18N.linkCopied))
+          .catch(() => showToast(I18N.copyFailed));
       });
     });
   }
@@ -314,7 +323,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function clearWishlist() {
-    if (confirm('Are you sure you want to clear your entire wishlist?')) {
+    if (confirm(I18N.confirmClearWishlist)) {
       localStorage.removeItem(WISHLIST_STORAGE_KEY);
       updateWishlistCount();
       renderWishlistItems();
@@ -324,7 +333,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function shareWishlist() {
     const items = getWishlistItems();
     if (items.length === 0) {
-      showToast('Your wishlist is empty!');
+      showToast(I18N.wishlistEmpty);
       return;
     }
 

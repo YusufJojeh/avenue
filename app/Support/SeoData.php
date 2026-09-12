@@ -21,7 +21,7 @@ class SeoData
     {
         $site = config('app.name', 'AVENUE');
         $description = trim(strip_tags((string) ($category->description ?? '')))
-            ?: "Browse {$category->name} products at {$site}.";
+            ?: __('common.pages.seo_browse_products_at', ['name' => $category->name, 'site' => $site]);
 
         $canonical = route('categories.show', ['slug' => LocalizedUrl::slug($category, app()->getLocale())]);
         return self::meta("{$category->name} - {$site}", Str::limit($description, 160, ''), self::paginated($canonical), $category->image_url ?? null, 'website', LocalizedUrl::alternates($category));
@@ -30,8 +30,9 @@ class SeoData
     public static function brand(object $brand): array
     {
         $site = config('app.name', 'AVENUE');
+        $description = __('common.pages.seo_browse_products_at', ['name' => $brand->name, 'site' => $site]);
         $canonical = route('brands.show', ['slug' => LocalizedUrl::slug($brand, app()->getLocale())]);
-        return self::meta("{$brand->name} - {$site}", "Browse {$brand->name} products at {$site}.", self::paginated($canonical), $brand->logo_url ?? null, 'website', LocalizedUrl::alternates($brand));
+        return self::meta("{$brand->name} - {$site}", $description, self::paginated($canonical), $brand->logo_url ?? null, 'website', LocalizedUrl::alternates($brand));
     }
 
     public static function listing(string $title, string $description, string $canonical): array
@@ -45,15 +46,15 @@ class SeoData
         $labelParts = array_filter([$categoryName, $brandName]);
 
         if ($search !== '') {
-            $title = "Search results for \"{$search}\" - {$site}";
-            $description = "Search results for \"{$search}\" at {$site}.";
+            $title = __('common.pages.search_results_for') . " \"{$search}\" - {$site}";
+            $description = __('common.pages.seo_search_results_at', ['query' => $search, 'site' => $site]);
         } elseif ($labelParts) {
             $label = implode(' - ', $labelParts);
             $title = "{$label} - {$site}";
-            $description = "Shop {$label} products at {$site}.";
+            $description = __('common.pages.seo_shop_products_at', ['label' => $label, 'site' => $site]);
         } else {
-            $title = "All Products - {$site}";
-            $description = "Browse all products available at {$site}.";
+            $title = __('common.pages.all_products') . " - {$site}";
+            $description = __('common.pages.seo_all_products_at', ['site' => $site]);
         }
 
         $canonical = self::paginated(route('products.index'));
@@ -73,8 +74,8 @@ class SeoData
         $schema['offers'] = ['@type' => 'Offer', 'url' => $url, 'priceCurrency' => config('app.currency', 'USD'), 'price' => $product->effective_price, 'availability' => $product->stock_qty > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock'];
 
         $crumbs = [
-            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => url('/')],
-            ['@type' => 'ListItem', 'position' => 2, 'name' => 'Products', 'item' => route('products.index')],
+            ['@type' => 'ListItem', 'position' => 1, 'name' => __('common.nav.home'), 'item' => url('/')],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => __('common.nav.products'), 'item' => route('products.index')],
         ];
         if ($product->category) $crumbs[] = ['@type' => 'ListItem', 'position' => 3, 'name' => $product->category->name, 'item' => route('categories.show', ['slug' => LocalizedUrl::slug($product->category, app()->getLocale())])];
         $crumbs[] = ['@type' => 'ListItem', 'position' => count($crumbs) + 1, 'name' => $product->name];

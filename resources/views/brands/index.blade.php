@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Brands - ' . ($siteName ?? 'MyStore'))
+@section('title', __('common.pages.our_brands') . ' - ' . ($siteName ?? 'MyStore'))
 
 @push('styles')
 <style>
@@ -272,9 +272,9 @@
 {{-- Brands Header --}}
 <section class="brands-header reveal">
   <div class="container position-relative">
-    <h1 class="brands-title">Our Brands</h1>
+    <h1 class="brands-title">{{ __('common.pages.our_brands') }}</h1>
     <p class="brands-subtitle">
-      Discover quality products from trusted brands. From internal collections to premium external partnerships.
+      {{ __('common.pages.discover_quality_products') }}
     </p>
   </div>
 </section>
@@ -307,13 +307,13 @@
                   </div>
                   <div class="brand-meta-item">
                     <span class="brand-type-badge {{ $brand->is_external ? 'external' : 'internal' }}">
-                      {{ $brand->is_external ? 'External' : 'Internal' }}
+                      {{ $brand->is_external ? __('common.pages.external') : __('common.pages.internal') }}
                     </span>
                   </div>
                 </div>
 
                 <div class="brand-actions">
-                  <span class="btn-view-products">View Products</span>
+                  <span class="btn-view-products">{{ __('common.pages.view_products') }}</span>
                 </div>
               </div>
             </a>
@@ -327,10 +327,10 @@
             <path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/>
           </svg>
         </div>
-        <h3>No brands found</h3>
-        <p>We don't have any brands yet.</p>
+        <h3>{{ __('common.pages.no_brands_found') }}</h3>
+        <p>{{ __('common.pages.we_dont_have_brands') }}</p>
         <a href="{{ route('products.index') }}" class="btn btn-vel-gold">
-          Browse All Products
+          {{ __('common.actions.browse_all_products') }}
         </a>
       </div>
     @endif

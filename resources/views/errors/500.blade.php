@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Server Error - ' . ($siteName ?? 'MyStore'))
+@section('title', __('common.pages.server_error') . ' - ' . ($siteName ?? 'MyStore'))
 
 @push('styles')
 <style>
@@ -103,19 +103,18 @@
 
     <div class="error-number">500</div>
 
-    <h1 class="error-title">Server Error</h1>
+    <h1 class="error-title">{{ __('common.pages.server_error') }}</h1>
 
     <p class="error-message">
-      Something went wrong on our end. We're working to fix the issue.
-      Please try again in a few minutes.
+      {{ __('common.pages.server_error_message') }}
     </p>
 
     <div class="error-actions">
       <a href="{{ route('home') }}" class="btn btn-vel-gold btn-lg px-4 py-2">
-        <i class="me-2">🏠</i> Go Home
+        <i class="me-2">🏠</i> {{ __('common.actions.go_home') }}
       </a>
       <button onclick="window.location.reload()" class="btn btn-vel-outline btn-lg px-4 py-2">
-        <i class="me-2">🔄</i> Try Again
+        <i class="me-2">🔄</i> {{ __('common.actions.try_again') }}
       </button>
     </div>
 

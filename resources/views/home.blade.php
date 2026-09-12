@@ -64,7 +64,7 @@
             @endif
             @if(!empty($mainSlide->cta_url))
               <a href="{{ $mainSlide->cta_url }}" class="btn btn-vel-gold btn-lg px-4 py-3">
-                {{ $mainSlide->cta_label ?? 'Shop Now' }}
+                {{ $mainSlide->cta_label ?? __('common.actions.shop_now') }}
                 <i class="ms-2">→</i>
               </a>
             @endif

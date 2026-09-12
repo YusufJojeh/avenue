@@ -549,8 +549,8 @@
 
   {{-- ================= Page Title ================= --}}
   <div class="page-header mb-4">
-    <h1>{{ $pageTitle ?? 'All Products' }}</h1>
-    <p class="text-muted">Discover amazing products and find exactly what you're looking for</p>
+    <h1>{{ $pageTitle ?? __('common.pages.all_products') }}</h1>
+    <p class="text-muted">{{ __('common.filters.products_subtitle') }}</p>
   </div>
 
   {{-- ================= Advanced Filters ================= --}}
@@ -559,20 +559,20 @@
       <div class="row g-3">
         {{-- Search Input --}}
         <div class="col-12 col-md-6 col-lg-4">
-          <label class="filter-label">Search Products</label>
+          <label class="filter-label">{{ __('common.filters.search_products') }}</label>
           <input type="text"
                  name="q"
                  value="{{ $q }}"
                  class="filter-input"
-                 placeholder="Search by name or description"
+                 placeholder="{{ __('common.filters.search_by_name') }}"
                  id="searchInput">
         </div>
 
         {{-- Brand Filter --}}
         <div class="col-6 col-md-3 col-lg-2">
-          <label class="filter-label">Brand</label>
+          <label class="filter-label">{{ __('common.fields.brand') }}</label>
           <select name="brand" class="filter-select" id="brandSelect">
-            <option value="">All Brands</option>
+            <option value="">{{ __('common.filters.all_brands') }}</option>
             @foreach($brands as $b)
               <option value="{{ $b->slug }}" @selected($brand===$b->slug)>{{ $b->name }}</option>
             @endforeach
@@ -581,9 +581,9 @@
 
         {{-- Category Filter --}}
         <div class="col-6 col-md-3 col-lg-2">
-          <label class="filter-label">Category</label>
+          <label class="filter-label">{{ __('common.fields.category') }}</label>
           <select name="category" class="filter-select" id="categorySelect">
-            <option value="">All Categories</option>
+            <option value="">{{ __('common.filters.all_categories') }}</option>
             @foreach($categories as $c)
               <option value="{{ $c->slug }}" @selected($category===$c->slug)>{{ $c->name }}</option>
             @endforeach
@@ -592,23 +592,23 @@
 
         {{-- Sort Filter --}}
         <div class="col-6 col-md-3 col-lg-2">
-          <label class="filter-label">Sort By</label>
+          <label class="filter-label">{{ __('common.filters.sort_by') }}</label>
           <select name="sort" class="filter-select" id="sortSelect">
-            <option value="latest" @selected($sort==='latest')>Latest First</option>
-            <option value="price_low" @selected($sort==='price_low')>Price: Low to High</option>
-            <option value="price_high" @selected($sort==='price_high')>Price: High to Low</option>
-            <option value="name" @selected($sort==='name')>Name: A to Z</option>
+            <option value="latest" @selected($sort==='latest')>{{ __('common.filters.latest_first') }}</option>
+            <option value="price_low" @selected($sort==='price_low')>{{ __('common.filters.price_low_high') }}</option>
+            <option value="price_high" @selected($sort==='price_high')>{{ __('common.filters.price_high_low') }}</option>
+            <option value="name" @selected($sort==='name')>{{ __('common.filters.name_az') }}</option>
           </select>
         </div>
 
         {{-- View Toggle --}}
         <div class="col-6 col-md-3 col-lg-2">
-          <label class="filter-label">View</label>
-          <div class="view-toggle" role="group" aria-label="View">
-            <button type="button" class="view-btn {{ $view === 'grid' ? 'active' : '' }}" data-view="grid" aria-label="Grid view" aria-pressed="{{ $view === 'grid' ? 'true' : 'false' }}">
+          <label class="filter-label">{{ __('common.filters.view') }}</label>
+          <div class="view-toggle" role="group" aria-label="{{ __('common.filters.view') }}">
+            <button type="button" class="view-btn {{ $view === 'grid' ? 'active' : '' }}" data-view="grid" aria-label="{{ __('common.filters.grid_view') }}" aria-pressed="{{ $view === 'grid' ? 'true' : 'false' }}">
               <i class="fas fa-th" aria-hidden="true"></i>
             </button>
-            <button type="button" class="view-btn {{ $view === 'list' ? 'active' : '' }}" data-view="list" aria-label="List view" aria-pressed="{{ $view === 'list' ? 'true' : 'false' }}">
+            <button type="button" class="view-btn {{ $view === 'list' ? 'active' : '' }}" data-view="list" aria-label="{{ __('common.filters.list_view') }}" aria-pressed="{{ $view === 'list' ? 'true' : 'false' }}">
               <i class="fas fa-list" aria-hidden="true"></i>
             </button>
           </div>
@@ -620,19 +620,19 @@
         <div class="filter-pills">
           @if($q)
             <span class="filter-pill">
-              Search: <strong>{{ $q }}</strong>
+              {{ __('common.actions.search') }}: <strong>{{ $q }}</strong>
               <span class="remove" onclick="removeFilter('q')">×</span>
             </span>
           @endif
           @if($brand)
             <span class="filter-pill">
-              Brand: <strong>{{ $brands->firstWhere('slug',$brand)->name ?? $brand }}</strong>
+              {{ __('common.fields.brand') }}: <strong>{{ $brands->firstWhere('slug',$brand)->name ?? $brand }}</strong>
               <span class="remove" onclick="removeFilter('brand')">×</span>
             </span>
           @endif
           @if($category)
             <span class="filter-pill">
-              Category: <strong>{{ $categories->firstWhere('slug',$category)->name ?? $category }}</strong>
+              {{ __('common.fields.category') }}: <strong>{{ $categories->firstWhere('slug',$category)->name ?? $category }}</strong>
               <span class="remove" onclick="removeFilter('category')">×</span>
             </span>
           @endif
@@ -642,10 +642,10 @@
       {{-- Action Buttons --}}
       <div class="filter-actions">
         <button type="submit" class="btn-filter">
-          <i class="fas fa-search me-2"></i>Apply Filters
+          <i class="fas fa-search me-2"></i>{{ __('common.filters.apply_filters') }}
         </button>
         <a href="{{ route('products.index') }}" class="btn-reset">
-          <i class="fas fa-refresh me-2"></i>Reset All
+          <i class="fas fa-refresh me-2"></i>{{ __('common.filters.reset_all') }}
         </a>
       </div>
     </form>
@@ -654,7 +654,7 @@
   {{-- ================= Results Header ================= --}}
   <div class="results-header">
     <div class="results-count">
-      Showing <strong>{{ $products->count() }}</strong> of <strong>{{ $products->total() }}</strong> products
+      {{ __('common.filters.showing_of') }} <strong>{{ $products->count() }}</strong> {{ __('common.filters.of') }} <strong>{{ $products->total() }}</strong> {{ __('common.filters.products') }}
     </div>
   </div>
 
@@ -668,10 +668,10 @@
       <div class="col-12">
         <div class="empty-state">
           <div class="empty-state-icon">🔍</div>
-          <h3>No Products Found</h3>
-          <p>We couldn't find any products matching your criteria</p>
+          <h3>{{ __('common.pages.no_products_found') }}</h3>
+          <p>{{ __('common.pages.couldnt_find_products') }}</p>
           <a href="{{ route('products.index') }}" class="btn btn-vel-gold">
-            <i class="fas fa-refresh me-2"></i>View All Products
+            <i class="fas fa-refresh me-2"></i>{{ __('common.pages.view_all_products') }}
           </a>
         </div>
       </div>

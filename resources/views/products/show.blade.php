@@ -608,19 +608,19 @@
           <div class="product-meta">
             @if($product->brand)
               <div class="meta-item">
-                <span class="meta-label">Brand:</span>
+                <span class="meta-label">{{ __('common.fields.brand') }}:</span>
                 <span class="meta-value">
                   <a href="{{ route('brands.show', ['slug' => $product->brand->slug]) }}">{{ $product->brand->name }}</a>
                 </span>
               </div>
             @endif
             <div class="meta-item">
-              <span class="meta-label">SKU:</span>
+              <span class="meta-label">{{ __('common.fields.sku') }}:</span>
               <span class="meta-value">{{ $product->sku }}</span>
             </div>
             @if($product->category)
               <div class="meta-item">
-                <span class="meta-label">Category:</span>
+                <span class="meta-label">{{ __('common.fields.category') }}:</span>
                 <span class="meta-value">
                   <a href="{{ route('categories.show', ['slug' => $product->category->slug]) }}">{{ $product->category->name }}</a>
           </span>
@@ -639,7 +639,7 @@
           @endphp
           @if($activeSizes && $activeSizes->count() > 0)
             <div class="size-selection">
-              <div class="size-label">Select Size:</div>
+              <div class="size-label">{{ __('common.fields.select_size') }}</div>
               <div class="size-options" id="sizeOptions">
                 @foreach($activeSizes as $size)
                   <div
@@ -660,9 +660,9 @@
 
           {{-- Stock Status --}}
           <div class="stock-status {{ $product->stock_qty > 0 ? 'in-stock' : 'out-of-stock' }}">
-            {{ $product->stock_qty > 0 ? 'In Stock' : 'Out of Stock' }}
+            {{ $product->stock_qty > 0 ? __('common.ui.in_stock') : __('common.ui.out_of_stock') }}
             @if($product->stock_qty > 0 && $product->stock_qty < 10)
-              <span style="font-size: 0.875rem;">(Only {{ $product->stock_qty }} left)</span>
+              <span style="font-size: 0.875rem;">{{ str_replace(':count', $product->stock_qty, __('common.ui.only_x_left')) }}</span>
             @endif
         </div>
 
@@ -672,9 +672,9 @@
               class="btn-primary-action btn-copy-link"
               id="copyLinkBtn"
               onclick="copyProductLink()"
-              title="Copy product link"
+              title="{{ __('common.actions.copy_product_link') }}"
             >
-              <i class="fas fa-link me-2"></i>Copy Link
+              <i class="fas fa-link me-2"></i>{{ __('common.actions.copy_link') }}
             </button>
             <button
               type="button"
@@ -689,7 +689,7 @@
               onclick="toggleWishlist(this)"
             >
               <i class="fas fa-heart me-2"></i>
-              <span class="wishlist-text">Add to Wishlist</span>
+              <span class="wishlist-text">{{ __('common.messages.add_to_wishlist') }}</span>
             </button>
             <button
               type="button"
@@ -697,7 +697,7 @@
               id="whatsappOrderBtn"
               onclick="orderViaWhatsApp()"
             >
-              <i class="fab fa-whatsapp me-2"></i>Order via WhatsApp
+              <i class="fab fa-whatsapp me-2"></i>{{ __('common.actions.order_via_whatsapp') }}
             </button>
         </div>
       </div>
@@ -707,7 +707,7 @@
     {{-- Description --}}
   @if(!empty($product->description))
       <div class="product-description-section">
-        <h2 class="section-title">Product Description</h2>
+        <h2 class="section-title">{{ __('common.pages.product_description') }}</h2>
         <div class="description-content">
           {!! nl2br(e($product->description)) !!}
       </div>
@@ -717,7 +717,7 @@
     {{-- Related Products --}}
     @if(isset($related) && $related->count() > 0)
       <div class="related-products-section">
-        <h2 class="section-title">You Might Also Like</h2>
+        <h2 class="section-title">{{ __('common.pages.you_might_also_like') }}</h2>
         <div class="row g-4">
           @foreach($related as $p)
             <div class="col-6 col-md-4 col-lg-3">
@@ -740,6 +740,16 @@
 
 @push('scripts')
 <script>
+  const PRODUCT_I18N = {
+    selectedPrefix: @json(__('common.ui.selected_prefix')),
+    copied: @json(__('common.toast.copied')),
+    copyFailedManual: @json(__('common.toast.copy_failed_manual')),
+    addToWishlist: @json(__('common.messages.add_to_wishlist')),
+    inWishlist: @json(__('common.ui.in_wishlist')),
+    removedFromWishlist: @json(__('common.toast.removed_from_wishlist')),
+    addedToWishlist: @json(__('common.toast.added_to_wishlist')),
+  };
+
   // Change main image when thumbnail is clicked
   function changeMainImage(imageUrl, imageAlt, thumbnailElement) {
     const mainImage = document.getElementById('mainProductImage');
@@ -853,7 +863,7 @@
     const infoDiv = document.getElementById('selectedSizeInfo');
     if (infoDiv) {
       infoDiv.style.display = 'block';
-      infoDiv.innerHTML = `Selected: <strong>${selectedSize.size}</strong>`;
+      infoDiv.innerHTML = `${PRODUCT_I18N.selectedPrefix} <strong>${selectedSize.size}</strong>`;
       if (selectedSize.price) {
         infoDiv.innerHTML += ` - $${parseFloat(selectedSize.price).toFixed(2)}`;
       }
@@ -870,7 +880,7 @@
       navigator.clipboard.writeText(productUrl).then(() => {
         // Show success feedback
         const originalText = copyBtn.innerHTML;
-        copyBtn.innerHTML = '<i class="fas fa-check me-2"></i>Copied!';
+        copyBtn.innerHTML = '<i class="fas fa-check me-2"></i>' + PRODUCT_I18N.copied;
         copyBtn.classList.add('copied');
 
         setTimeout(() => {
@@ -901,7 +911,7 @@
       const successful = document.execCommand('copy');
       if (successful) {
         const originalText = button.innerHTML;
-        button.innerHTML = '<i class="fas fa-check me-2"></i>Copied!';
+        button.innerHTML = '<i class="fas fa-check me-2"></i>' + PRODUCT_I18N.copied;
         button.classList.add('copied');
 
         setTimeout(() => {
@@ -911,7 +921,7 @@
       }
     } catch (err) {
       console.error('Fallback copy failed:', err);
-      alert('Failed to copy link. Please copy manually: ' + text);
+      alert(PRODUCT_I18N.copyFailedManual + ' ' + text);
     }
 
     document.body.removeChild(textArea);
@@ -949,8 +959,8 @@
       // Remove from wishlist
       items = items.filter(item => item.id !== productId);
       button.classList.remove('in-wishlist');
-      button.querySelector('.wishlist-text').textContent = 'Add to Wishlist';
-      showToast('Removed from wishlist', 'info');
+      button.querySelector('.wishlist-text').textContent = PRODUCT_I18N.addToWishlist;
+      showToast(PRODUCT_I18N.removedFromWishlist, 'info');
     } else {
       // Add to wishlist
       items.push({
@@ -962,8 +972,8 @@
         image: productImage
       });
       button.classList.add('in-wishlist');
-      button.querySelector('.wishlist-text').textContent = 'In Wishlist';
-      showToast('Added to wishlist', 'success');
+      button.querySelector('.wishlist-text').textContent = PRODUCT_I18N.inWishlist;
+      showToast(PRODUCT_I18N.addedToWishlist, 'success');
     }
 
     saveWishlistItems(items);

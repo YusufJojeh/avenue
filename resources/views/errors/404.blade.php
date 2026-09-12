@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Page Not Found - ' . ($siteName ?? 'MyStore'))
+@section('title', __('common.pages.page_not_found') . ' - ' . ($siteName ?? 'MyStore'))
 
 @push('styles')
 <style>
@@ -115,34 +115,33 @@
 
     <div class="error-number">404</div>
 
-    <h1 class="error-title">Page Not Found</h1>
+    <h1 class="error-title">{{ __('common.pages.page_not_found') }}</h1>
 
     <p class="error-message">
-      Oops! The page you're looking for doesn't exist. It might have been moved,
-      deleted, or you entered the wrong URL.
+      {{ __('common.pages.page_not_found_message') }}
     </p>
 
     <div class="error-actions">
       <a href="{{ route('home') }}" class="btn btn-vel-gold btn-lg px-4 py-2">
-        <i class="me-2">🏠</i> Go Home
+        <i class="me-2">🏠</i> {{ __('common.actions.go_home') }}
       </a>
       <a href="{{ route('products.index') }}" class="btn btn-primary btn-lg">
         <svg class="me-2 browse-icon" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
           <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
         </svg>
-        Browse Products
+        {{ __('common.actions.browse_products') }}
       </a>
     </div>
 
     <div class="suggested-links">
-      <h3>Popular Pages</h3>
+      <h3>{{ __('common.pages.popular_pages') }}</h3>
       <ul>
-        <li><a href="{{ route('products.index') }}">All Products</a></li>
-        <li><a href="{{ route('categories.index') }}">Categories</a></li>
-        <li><a href="{{ route('brands.index') }}">Brands</a></li>
-        <li><a href="{{ route('about') }}">About Us</a></li>
-        <li><a href="{{ route('contact') }}">Contact</a></li>
-        <li><a href="{{ route('faq') }}">FAQ</a></li>
+        <li><a href="{{ route('products.index') }}">{{ __('common.pages.all_products') }}</a></li>
+        <li><a href="{{ route('categories.index') }}">{{ __('common.nav.categories') }}</a></li>
+        <li><a href="{{ route('brands.index') }}">{{ __('common.nav.brands') }}</a></li>
+        <li><a href="{{ route('about') }}">{{ __('common.pages.about_us') }}</a></li>
+        <li><a href="{{ route('contact') }}">{{ __('common.nav.contact') }}</a></li>
+        <li><a href="{{ route('faq') }}">{{ __('common.nav.faq') }}</a></li>
       </ul>
     </div>
   </div>

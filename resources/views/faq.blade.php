@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'FAQ - ' . ($siteName ?? 'MyStore'))
+@section('title', __('common.nav.faq') . ' - ' . ($siteName ?? 'MyStore'))
 
 @push('styles')
 @include('partials.unified-styles')
@@ -126,7 +126,7 @@
   <div class="page-header text-center mb-5">
     <h1 class="page-title">{{ __('common.messages.frequently_asked_questions') }}</h1>
     <p class="page-subtitle text-muted">
-      Find answers to common questions about our products, services, and policies.
+      {{ __('common.pages.find_answers_common') }}
     </p>
   </div>
 
@@ -144,37 +144,31 @@
         </button>
         <div class="faq-answer">
           <p>
-            {{ $siteName ?? 'MyStore' }} is an online marketplace that offers a wide variety of high-quality products
-            from trusted brands. We focus on providing exceptional customer service, competitive prices,
-            and a seamless shopping experience.
+            {{ __('common.pages.mystore_description') }}
           </p>
         </div>
       </div>
 
       <div class="faq-item">
         <button class="faq-question" onclick="toggleFAQ(this)">
-          How do I create an account?
+          {{ __('common.pages.how_create_account') }}
           <span class="faq-icon">+</span>
         </button>
         <div class="faq-answer">
           <p>
-            {{ __('common.messages.creating_account_easy') }}
-            fill in your details, and verify your email address. You'll then have access to your
-            personalized dashboard, order history, and exclusive member benefits.
+            {{ __('common.pages.creating_account_easy') }}
           </p>
         </div>
       </div>
 
       <div class="faq-item">
         <button class="faq-question" onclick="toggleFAQ(this)">
-          Is my personal information secure?
+          {{ __('common.pages.personal_information_secure') }}
           <span class="faq-icon">+</span>
         </button>
         <div class="faq-answer">
           <p>
-            Absolutely! We take your privacy and security very seriously. All personal information
-            is encrypted using industry-standard SSL technology, and we never share your data with
-            third parties without your explicit consent.
+            {{ __('common.pages.absolutely_secure') }}
           </p>
         </div>
       </div>
@@ -182,66 +176,60 @@
 
     {{-- Shopping & Orders --}}
     <div class="faq-section">
-      <h2 class="section-title">Shopping & Orders</h2>
+      <h2 class="section-title">{{ __('common.pages.shopping_orders') }}</h2>
 
       <div class="faq-item">
         <button class="faq-question" onclick="toggleFAQ(this)">
-          How do I place an order?
+          {{ __('common.pages.how_place_order') }}
           <span class="faq-icon">+</span>
         </button>
         <div class="faq-answer">
           <p>
-            To place an order, simply browse our products, add items to your cart, and proceed to checkout.
-            You can choose from various payment methods including credit cards, PayPal, and other secure
-            payment options. You'll receive an order confirmation email once your order is placed.
+            {{ __('common.pages.place_order_description') }}
           </p>
         </div>
       </div>
 
       <div class="faq-item">
         <button class="faq-question" onclick="toggleFAQ(this)">
-          What payment methods do you accept?
+          {{ __('common.pages.payment_methods_accept') }}
           <span class="faq-icon">+</span>
         </button>
         <div class="faq-answer">
           <p>
-            We accept all major credit cards (Visa, MasterCard, American Express), PayPal, Apple Pay,
-            Google Pay, and bank transfers. All payments are processed securely through our trusted
-            payment partners.
+            {{ __('common.pages.payment_methods_description') }}
           </p>
         </div>
       </div>
 
       <div class="faq-item">
         <button class="faq-question" onclick="toggleFAQ(this)">
-          How long does shipping take?
+          {{ __('common.pages.shipping_times') }}
           <span class="faq-icon">+</span>
         </button>
         <div class="faq-answer">
           <p>
-            Shipping times vary depending on your location and the shipping method you choose:
+            {{ __('common.pages.shipping_times_description') }}
           </p>
           <ul>
-            <li>Standard Shipping: 3-5 business days</li>
-            <li>Express Shipping: 1-2 business days</li>
-            <li>International Shipping: 7-14 business days</li>
+            <li>{{ __('common.pages.standard_shipping') }}</li>
+            <li>{{ __('common.pages.express_shipping') }}</li>
+            <li>{{ __('common.pages.international_shipping') }}</li>
           </ul>
           <p>
-            You'll receive tracking information once your order ships.
+            {{ __('common.pages.receive_tracking_info') }}
           </p>
         </div>
       </div>
 
       <div class="faq-item">
         <button class="faq-question" onclick="toggleFAQ(this)">
-          Can I cancel or modify my order?
+          {{ __('common.pages.cancel_modify_order') }}
           <span class="faq-icon">+</span>
         </button>
         <div class="faq-answer">
           <p>
-            Orders can be cancelled or modified within 1 hour of placement, as long as they haven't
-            been processed for shipping. Please contact our customer service team immediately if you
-            need to make changes to your order.
+            {{ __('common.pages.cancel_modify_description') }}
           </p>
         </div>
       </div>
@@ -249,47 +237,40 @@
 
     {{-- Returns & Refunds --}}
     <div class="faq-section">
-      <h2 class="section-title">Returns & Refunds</h2>
+      <h2 class="section-title">{{ __('common.pages.returns_refunds') }}</h2>
 
       <div class="faq-item">
         <button class="faq-question" onclick="toggleFAQ(this)">
-          What is your return policy?
+          {{ __('common.pages.return_policy') }}
           <span class="faq-icon">+</span>
         </button>
         <div class="faq-answer">
           <p>
-            We offer a 30-day return policy for most items. Products must be in their original
-            condition with all packaging intact. Some items may have different return policies
-            due to their nature (e.g., digital products, personalized items).
+            {{ __('common.pages.return_policy_description') }}
           </p>
         </div>
       </div>
 
       <div class="faq-item">
         <button class="faq-question" onclick="toggleFAQ(this)">
-          How do I return an item?
+          {{ __('common.pages.how_return_item') }}
           <span class="faq-icon">+</span>
         </button>
         <div class="faq-answer">
           <p>
-            To return an item, log into your account and go to "Order History." Select the order
-            containing the item you want to return and follow the return process. You'll receive
-            a return shipping label and instructions. Once we receive the item, we'll process
-            your refund within 5-7 business days.
+            {{ __('common.pages.return_item_description') }}
           </p>
         </div>
       </div>
 
       <div class="faq-item">
         <button class="faq-question" onclick="toggleFAQ(this)">
-          How long does it take to get a refund?
+          {{ __('common.pages.refund_time') }}
           <span class="faq-icon">+</span>
         </button>
         <div class="faq-answer">
           <p>
-            Refunds are typically processed within 5-7 business days after we receive your returned item.
-            The time it takes for the refund to appear in your account depends on your bank or
-            payment provider, but usually takes 3-5 business days.
+            {{ __('common.pages.refund_time_description') }}
           </p>
         </div>
       </div>
@@ -301,42 +282,36 @@
 
       <div class="faq-item">
         <button class="faq-question" onclick="toggleFAQ(this)">
-          Are your products authentic?
+          {{ __('common.pages.products_authentic') }}
           <span class="faq-icon">+</span>
         </button>
         <div class="faq-answer">
           <p>
-            Yes, all our products are 100% authentic. We work directly with authorized distributors
-            and manufacturers to ensure the authenticity and quality of every item in our catalog.
-            We never sell counterfeit or replica products.
+            {{ __('common.pages.products_authentic_description') }}
           </p>
         </div>
       </div>
 
       <div class="faq-item">
         <button class="faq-question" onclick="toggleFAQ(this)">
-          Do you offer product warranties?
+          {{ __('common.pages.product_warranties') }}
           <span class="faq-icon">+</span>
         </button>
         <div class="faq-answer">
           <p>
-            Most products come with manufacturer warranties. The warranty period and coverage vary
-            by product and brand. You can find warranty information on each product page.
-            Additionally, we offer extended warranty options for many items.
+            {{ __('common.pages.product_warranties_description') }}
           </p>
         </div>
       </div>
 
       <div class="faq-item">
         <button class="faq-question" onclick="toggleFAQ(this)">
-          Can I see product reviews?
+          {{ __('common.pages.product_reviews') }}
           <span class="faq-icon">+</span>
         </button>
         <div class="faq-answer">
           <p>
-            Yes! We display customer reviews and ratings for all products. These reviews are
-            from verified customers who have purchased and used the products. You can filter
-            reviews by rating, date, and helpfulness to find the information most relevant to you.
+            {{ __('common.pages.product_reviews_description') }}
           </p>
         </div>
       </div>
@@ -348,39 +323,38 @@
 
       <div class="faq-item">
         <button class="faq-question" onclick="toggleFAQ(this)">
-          How can I contact customer service?
+          {{ __('common.pages.contact_customer_service') }}
           <span class="faq-icon">+</span>
         </button>
         <div class="faq-answer">
           <p>
-            Our customer service team is available 24/7 to help you. You can reach us through:
+            {{ __('common.pages.contact_customer_service_description') }}
           </p>
           <ul>
-            <li>Live Chat: Available on our website</li>
-            <li>Email: support@{{ str_replace(['http://', 'https://', 'www.'], '', config('app.url', 'mystore.com')) }}</li>
-            <li>Phone: +1 (555) 123-4567</li>
-            <li>Contact Form: Available on our Contact page</li>
+            <li>{{ __('common.pages.live_chat') }}</li>
+            <li>{{ __('common.fields.email') }}: {{ 'support@' . str_replace(['http://', 'https://', 'www.'], '', config('app.url', 'mystore.com')) }}</li>
+            <li>{{ __('common.pages.phone_support') }}</li>
+            <li>{{ __('common.pages.contact_form') }}</li>
           </ul>
         </div>
       </div>
 
       <div class="faq-item">
         <button class="faq-question" onclick="toggleFAQ(this)">
-          What are your business hours?
+          {{ __('common.pages.what_are_business_hours') }}
           <span class="faq-icon">+</span>
         </button>
         <div class="faq-answer">
           <p>
-            Our online store is open 24/7, so you can shop anytime! Our customer service team
-            is available:
+            {{ __('common.pages.business_hours_description') }}
           </p>
           <ul>
-            <li>Monday - Friday: 9:00 AM - 6:00 PM (EST)</li>
-            <li>Saturday: 10:00 AM - 4:00 PM (EST)</li>
-            <li>Sunday: Closed</li>
+            <li>{{ __('common.pages.monday_friday_est') }}</li>
+            <li>{{ __('common.pages.saturday_est') }}</li>
+            <li>{{ __('common.pages.sunday_closed') }}</li>
           </ul>
           <p>
-            For urgent matters outside these hours, you can still reach us via email.
+            {{ __('common.pages.urgent_matters') }}
           </p>
         </div>
       </div>
@@ -391,9 +365,9 @@
 {{-- Contact Section --}}
 <section class="cta-section reveal">
   <div class="container position-relative">
-    <h3 class="contact-title">Still Have Questions?</h3>
+    <h3 class="contact-title">{{ __('common.pages.still_have_questions') }}</h3>
     <p class="contact-text">
-      Can't find the answer you're looking for? Our customer service team is here to help!
+      {{ __('common.pages.cant_find_answer') }}
     </p>
     <div class="d-flex gap-3 justify-content-center flex-wrap">
       <a href="{{ route('contact') }}" class="btn btn-enhanced btn-lg px-4 py-2">

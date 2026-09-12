@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Categories - ' . ($siteName ?? 'AVENUE'))
+@section('title', __('common.nav.categories') . ' - ' . ($siteName ?? 'AVENUE'))
 
 @section('meta_description', 'Browse all product categories at ' . ($siteName ?? 'AVENUE') . '. Discover curated collections and find exactly what you need.')
 @section('canonical', route('categories.index'))
@@ -157,12 +157,12 @@
         <div class="category-stats">
           <span>
             <span aria-hidden="true">📦</span>
-            {{ $category->products_count ?? 0 }} products
+            {{ $category->products_count ?? 0 }} {{ __('common.filters.products') }}
           </span>
           @if($category->children_count > 0)
             <span>
               <span aria-hidden="true">📂</span>
-              {{ $category->children_count }} subcategories
+              {{ $category->children_count }} {{ __('common.fields.subcategories') }}
             </span>
           @endif
         </div>
@@ -170,8 +170,8 @@
     @empty
       <div class="col-12">
         <div class="alert alert-info text-center">
-          <h5>No categories found</h5>
-          <p class="mb-0">Categories will appear here once they are added to the system.</p>
+          <h5>{{ __('common.pages.no_categories_found') }}</h5>
+          <p class="mb-0">{{ __('common.pages.categories_will_appear') }}</p>
         </div>
       </div>
     @endforelse

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Search Results - ' . ($q ? '"' . $q . '"' : 'All Products') . ' - ' . ($siteName ?? 'MyStore'))
+@section('title', ($q ? __('common.pages.search_results_for') . ' "' . $q . '"' : __('common.pages.all_products')) . ' - ' . ($siteName ?? 'MyStore'))
 @section('meta_robots', 'noindex, follow')
 @section('canonical', route('search'))
 
@@ -305,16 +305,16 @@
   <div class="container position-relative">
     <h1 class="search-title">
       @if($q)
-        Search Results for "{{ $q }}"
+        {{ __('common.pages.search_results_for') }} "{{ $q }}"
       @else
-        All Products
+        {{ __('common.pages.all_products') }}
       @endif
     </h1>
     <p class="search-subtitle">
       @if($q)
-        Found {{ $products->total() }} product{{ $products->total() != 1 ? 's' : '' }} matching your search.
+        {{ $products->total() }} {{ __('common.pages.found_products') }}
       @else
-        Browse our complete collection of products.
+        {{ __('common.pages.browse_complete_collection') }}
       @endif
     </p>
   </div>
@@ -329,13 +329,13 @@
           <input type="text"
                  class="form-control"
                  name="q"
-                 placeholder="Search products..."
+                 placeholder="{{ __('common.messages.search_placeholder') }}"
                  value="{{ $q }}"
                  required>
         </div>
         <div class="col-md-2">
           <select name="category" class="filter-select">
-            <option value="">All Categories</option>
+            <option value="">{{ __('common.filters.all_categories') }}</option>
             @foreach($categories as $cat)
               <option value="{{ $cat->slug }}" {{ $category == $cat->slug ? 'selected' : '' }}>
                 {{ $cat->name }}
@@ -345,7 +345,7 @@
         </div>
         <div class="col-md-2">
           <select name="brand" class="filter-select">
-            <option value="">All Brands</option>
+            <option value="">{{ __('common.filters.all_brands') }}</option>
             @foreach($brands as $br)
               <option value="{{ $br->slug }}" {{ $brand == $br->slug ? 'selected' : '' }}>
                 {{ $br->name }}
@@ -354,7 +354,7 @@
           </select>
         </div>
         <div class="col-md-2">
-          <button type="submit" class="btn btn-vel-gold w-100">Search</button>
+          <button type="submit" class="btn btn-vel-gold w-100">{{ __('common.actions.search') }}</button>
         </div>
       </div>
     </form>
@@ -368,43 +368,43 @@
       {{-- Filters Sidebar --}}
       <div class="col-lg-3">
         <div class="filters-section">
-          <h5 class="filter-label">Sort By</h5>
+          <h5 class="filter-label">{{ __('common.filters.sort_by') }}</h5>
           <div class="sort-options">
             <a href="{{ request()->fullUrlWithQuery(['sort' => 'latest']) }}"
                class="sort-option {{ $sort == 'latest' ? 'active' : '' }}">
-              Latest
+              {{ __('common.pages.latest') }}
             </a>
             <a href="{{ request()->fullUrlWithQuery(['sort' => 'price_low']) }}"
                class="sort-option {{ $sort == 'price_low' ? 'active' : '' }}">
-              Price Low
+              {{ __('common.pages.price_low') }}
             </a>
             <a href="{{ request()->fullUrlWithQuery(['sort' => 'price_high']) }}"
                class="sort-option {{ $sort == 'price_high' ? 'active' : '' }}">
-              Price High
+              {{ __('common.pages.price_high') }}
             </a>
             <a href="{{ request()->fullUrlWithQuery(['sort' => 'name']) }}"
                class="sort-option {{ $sort == 'name' ? 'active' : '' }}">
-              Name
+              {{ __('common.pages.name') }}
             </a>
           </div>
 
           @if($q)
             <div class="search-suggestions">
-              <h6 class="suggestion-title">Search Suggestions</h6>
+              <h6 class="suggestion-title">{{ __('common.pages.search_suggestions') }}</h6>
               <ul class="suggestion-list">
                 <li class="suggestion-item">
                   <a href="{{ route('products.index', ['q' => 'featured']) }}" class="suggestion-link">
-                    Featured Products
+                    {{ __('common.nav.featured_products') }}
                   </a>
                 </li>
                 <li class="suggestion-item">
                   <a href="{{ route('products.index', ['q' => 'new']) }}" class="suggestion-link">
-                    New Arrivals
+                    {{ __('common.nav.new_arrivals') }}
                   </a>
                 </li>
                 <li class="suggestion-item">
                   <a href="{{ route('products.index', ['q' => 'sale']) }}" class="suggestion-link">
-                    On Sale
+                    {{ __('common.pages.on_sale') }}
                   </a>
                 </li>
               </ul>
@@ -416,7 +416,7 @@
       {{-- Results --}}
       <div class="col-lg-9">
         <div class="results-count">
-          Showing {{ $products->firstItem() ?? 0 }} - {{ $products->lastItem() ?? 0 }} of {{ $products->total() }} results
+          {{ __('common.pages.showing') }} {{ $products->firstItem() ?? 0 }} - {{ $products->lastItem() ?? 0 }} {{ __('common.pages.of') }} {{ $products->total() }} {{ __('common.pages.results') }}
         </div>
 
         @if($products->count() > 0)
@@ -437,20 +437,20 @@
         @else
           <div class="no-results">
             <div class="no-results-icon">🔍</div>
-            <h3>No products found</h3>
+            <h3>{{ __('common.pages.no_products_found') }}</h3>
             <p>
               @if($q)
-                We couldn't find any products matching "{{ $q }}".
+                {{ __('common.pages.couldnt_find_matching') }} "{{ $q }}".
               @else
-                No products available at the moment.
+                {{ __('common.pages.no_products_available') }}
               @endif
             </p>
             <div class="d-flex gap-2 justify-content-center">
               <a href="{{ route('products.index') }}" class="btn btn-vel-gold">
-                Browse All Products
+                {{ __('common.actions.browse_all_products') }}
               </a>
               <a href="{{ route('categories.index') }}" class="btn btn-vel-outline">
-                Browse Categories
+                {{ __('common.pages.browse_categories') }}
               </a>
             </div>
           </div>

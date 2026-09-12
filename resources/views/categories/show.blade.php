@@ -92,10 +92,10 @@
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
-        <a href="{{ route('home') }}" class="breadcrumb-link">Home</a>
+        <a href="{{ route('home') }}" class="breadcrumb-link">{{ __('common.nav.home') }}</a>
       </li>
       <li class="breadcrumb-item">
-        <a href="{{ route('products.index') }}" class="breadcrumb-link">Products</a>
+        <a href="{{ route('products.index') }}" class="breadcrumb-link">{{ __('common.nav.products') }}</a>
       </li>
       @if($category->parent)
         <li class="breadcrumb-item">
@@ -120,7 +120,7 @@
 
     @if($category->children->count() > 0)
       <div class="mt-3">
-        <h6 class="text-muted mb-2">Subcategories:</h6>
+        <h6 class="text-muted mb-2">{{ __('common.fields.subcategories') }}:</h6>
         <div class="d-flex gap-2 flex-wrap justify-content-center">
           @foreach($category->children as $child)
             <a href="{{ route('categories.show', ['slug' => $child->slug]) }}" class="btn btn-sm btn-vel-outline">
@@ -134,16 +134,16 @@
 
   {{-- Products Count --}}
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="h5 mb-0">{{ $products->total() }} products found</h2>
+    <h2 class="h5 mb-0">{{ $products->total() }} {{ __('common.pages.products_found') }}</h2>
 
     {{-- Sort Options --}}
     <div class="d-flex align-items-center gap-2">
-      <label class="form-label mb-0">Sort:</label>
+      <label class="form-label mb-0">{{ __('common.actions.sort') }}:</label>
       <select class="form-select form-select-sm" onchange="window.location.href=this.value" style="width: auto;">
-        <option value="{{ request()->fullUrlWithQuery(['sort' => 'latest']) }}" @selected(request('sort', 'latest') === 'latest')>Latest</option>
-        <option value="{{ request()->fullUrlWithQuery(['sort' => 'price_low']) }}" @selected(request('sort') === 'price_low')>Price: Low → High</option>
-        <option value="{{ request()->fullUrlWithQuery(['sort' => 'price_high']) }}" @selected(request('sort') === 'price_high')>Price: High → Low</option>
-        <option value="{{ request()->fullUrlWithQuery(['sort' => 'name']) }}" @selected(request('sort') === 'name')>Name (A–Z)</option>
+        <option value="{{ request()->fullUrlWithQuery(['sort' => 'latest']) }}" @selected(request('sort', 'latest') === 'latest')>{{ __('common.pages.latest') }}</option>
+        <option value="{{ request()->fullUrlWithQuery(['sort' => 'price_low']) }}" @selected(request('sort') === 'price_low')>{{ __('common.filters.price_low_high') }}</option>
+        <option value="{{ request()->fullUrlWithQuery(['sort' => 'price_high']) }}" @selected(request('sort') === 'price_high')>{{ __('common.filters.price_high_low') }}</option>
+        <option value="{{ request()->fullUrlWithQuery(['sort' => 'name']) }}" @selected(request('sort') === 'name')>{{ __('common.filters.name_az') }}</option>
       </select>
     </div>
   </div>
@@ -157,9 +157,9 @@
     @empty
       <div class="col-12">
         <div class="alert alert-info text-center">
-          <h5>No products found in this category</h5>
-          <p class="mb-0">Check back later for new products or browse our other categories.</p>
-          <a href="{{ route('products.index') }}" class="btn btn-vel-gold mt-2">Browse All Products</a>
+          <h5>{{ __('common.pages.no_products_in_category') }}</h5>
+          <p class="mb-0">{{ __('common.pages.check_back_later') }}</p>
+          <a href="{{ route('products.index') }}" class="btn btn-vel-gold mt-2">{{ __('common.actions.browse_all_products') }}</a>
         </div>
       </div>
     @endforelse
@@ -175,7 +175,7 @@
   {{-- Related Categories --}}
   @if($category->parent && $category->parent->children->count() > 1)
     <div class="mt-5 pt-4 border-top">
-      <h3 class="h5 mb-3">Other categories in {{ $category->parent->name }}</h3>
+      <h3 class="h5 mb-3">{{ __('common.pages.other_categories_in') }} {{ $category->parent->name }}</h3>
       <div class="row g-2">
         @foreach($category->parent->children->where('id', '!=', $category->id) as $sibling)
           <div class="col-6 col-md-3">
@@ -185,7 +185,7 @@
                   <img src="{{ $sibling->image_url }}" alt="{{ $sibling->name }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; margin-bottom: 0.5rem;">
                 @endif
                 <div class="fw-semibold">{{ $sibling->name }}</div>
-                <div class="small text-muted">{{ $sibling->products_count ?? 0 }} products</div>
+                <div class="small text-muted">{{ $sibling->products_count ?? 0 }} {{ __('common.filters.products') }}</div>
               </div>
             </a>
           </div>

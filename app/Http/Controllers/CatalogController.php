@@ -118,7 +118,7 @@ class CatalogController extends Controller
                 if ($this->current_page > 1) {
                     $prevPage = $this->current_page - 1;
                     $prevUrl = $this->buildUrl($prevPage, $queryParams);
-                    $html .= '<li class="page-item"><a class="page-link" href="' . $prevUrl . '">Previous</a></li>';
+                    $html .= '<li class="page-item"><a class="page-link" href="' . $prevUrl . '">' . __('pagination.previous') . '</a></li>';
                 }
 
                 // Page numbers
@@ -149,7 +149,7 @@ class CatalogController extends Controller
                 if ($this->current_page < $this->last_page) {
                     $nextPage = $this->current_page + 1;
                     $nextUrl = $this->buildUrl($nextPage, $queryParams);
-                    $html .= '<li class="page-item"><a class="page-link" href="' . $nextUrl . '">Next</a></li>';
+                    $html .= '<li class="page-item"><a class="page-link" href="' . $nextUrl . '">' . __('pagination.next') . '</a></li>';
                 }
 
                 $html .= '</ul></nav>';

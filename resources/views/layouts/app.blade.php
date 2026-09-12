@@ -322,7 +322,7 @@
         <div class="footer-social">
           <div class="social-links">
             @if(isset($settings['social_media']['facebook']) && $settings['social_media']['facebook'])
-            <a href="{{ $settings['social_media']['facebook'] }}" target="_blank" class="social-link facebook-link" aria-label="Facebook">
+            <a href="{{ $settings['social_media']['facebook'] }}" target="_blank" class="social-link facebook-link" aria-label="{{ __('common.messages.facebook') }}">
               <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
               </svg>
@@ -330,7 +330,7 @@
             @endif
 
             @if(isset($settings['social_media']['instagram']) && $settings['social_media']['instagram'])
-            <a href="{{ $settings['social_media']['instagram'] }}" target="_blank" class="social-link instagram-link" aria-label="Instagram">
+            <a href="{{ $settings['social_media']['instagram'] }}" target="_blank" class="social-link instagram-link" aria-label="{{ __('common.messages.instagram') }}">
               <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M16.98 0a6.9 6.9 0 0 1 5.08 1.98A6.94 6.94 0 0 1 24 7.02v9.96c0 2.08-.68 3.87-1.98 5.13A7.14 7.14 0 0 1 16.94 24H7.06a7.06 7.06 0 0 1-5.03-1.89A6.96 6.96 0 0 1 0 16.94V7.02C0 2.8 2.8 0 7.02 0h9.96zm.05 2.23H7.06c-1.45 0-2.7.43-3.53 1.25a4.82 4.82 0 0 0-1.02 1.08A4.9 4.9 0 0 0 2.1 7.02v9.92a4.9 4.9 0 0 0 1.44 3.53 4.9 4.9 0 0 0 3.53 1.44h9.88a4.9 4.9 0 0 0 3.53-1.44 4.9 4.9 0 0 0 1.44-3.53V7.02a4.9 4.9 0 0 0-1.44-3.53 4.9 4.9 0 0 0-3.53-1.44zM12 5.76c3.39 0 6.13 2.74 6.13 6.13a6.13 6.13 0 0 1-12.26 0c0-3.39 2.74-6.13 6.13-6.13zm0 2.22a3.91 3.91 0 0 0-3.9 3.9 3.91 3.91 0 0 0 3.9 3.9 3.91 3.91 0 0 0 3.9-3.9 3.91 3.91 0 0 0-3.9-3.9zm6.44-3.53a1.68 1.68 0 0 1 0 3.36 1.68 1.68 0 0 1-3.36 0 1.68 1.68 0 0 1 3.36 0z"/>
               </svg>

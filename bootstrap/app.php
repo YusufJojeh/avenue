@@ -17,5 +17,16 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // Genuinely unmatched routes (true 404s) never run LocaleMiddleware,
+        // since it only fires for routes matched inside the {locale} group.
+        // Detect the intended locale from the URL here so error pages
+        // (404/500) render in the correct language.
+        $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
+            $locale = (string) $request->segment(1);
+            if (in_array($locale, ['ar', 'en'], true)) {
+                app()->setLocale($locale);
+            }
+
+            return null;
+        });
     })->create();

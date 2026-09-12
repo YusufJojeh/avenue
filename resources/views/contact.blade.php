@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Contact Us - ' . ($siteName ?? 'MyStore'))
+@section('title', __('common.actions.contact_us') . ' - ' . ($siteName ?? 'MyStore'))
 
 @push('styles')
 @include('partials.unified-styles')
@@ -144,7 +144,7 @@
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="name" class="form-label">Full Name *</label>
+                  <label for="name" class="form-label">{{ __('common.pages.full_name') }} *</label>
                   <input type="text"
                          class="form-control @error('name') is-invalid @enderror"
                          id="name"
@@ -166,7 +166,7 @@
                          id="email"
                          name="email"
                          value="{{ old('email') }}"
-                         placeholder="your.email@example.com"
+                         placeholder="{{ __('common.pages.your_email_example') }}"
                          aria-describedby="email-error"
                          required>
                   @error('email')
@@ -221,7 +221,7 @@
             <div class="info-icon">📍</div>
             <div class="info-content">
               <h5>{{ __('common.fields.address') }}</h5>
-              <p>123 Commerce Street<br>Business District<br>City, State 12345</p>
+              <p>{{ implode('<br>', explode(', ', __('common.pages.address_example'))) }}</p>
             </div>
           </div>
 
@@ -229,7 +229,7 @@
             <div class="info-icon">📧</div>
             <div class="info-content">
               <h5>{{ __('common.fields.email') }}</h5>
-              <p>info@{{ str_replace(['http://', 'https://', 'www.'], '', config('app.url', 'mystore.com')) }}</p>
+              <p>{{ 'info@' . str_replace(['http://', 'https://', 'www.'], '', config('app.url', 'mystore.com')) }}</p>
             </div>
           </div>
 
@@ -244,8 +244,8 @@
           <div class="info-item">
             <div class="info-icon">🕒</div>
             <div class="info-content">
-              <h5>Business Hours</h5>
-              <p>Monday - Friday: 9:00 AM - 6:00 PM<br>Saturday: 10:00 AM - 4:00 PM<br>Sunday: Closed</p>
+              <h5>{{ __('common.pages.business_hours') }}</h5>
+              <p>{{ __('common.pages.monday_friday') }}<br>{{ __('common.pages.saturday') }}<br>{{ __('common.pages.sunday') }}</p>
             </div>
           </div>
 
@@ -257,12 +257,12 @@
           @if($facebook || $instagram)
             <div class="social-links">
               @if($facebook)
-                <a href="{{ $facebook }}" target="_blank" rel="noopener" class="social-link" title="{{ __('common.messages.facebook') }}" aria-label="Facebook">
+                <a href="{{ $facebook }}" target="_blank" rel="noopener" class="social-link" title="{{ __('common.messages.facebook') }}" aria-label="{{ __('common.messages.facebook') }}">
                   <i class="fab fa-facebook-f" aria-hidden="true"></i>
                 </a>
               @endif
               @if($instagram)
-                <a href="{{ $instagram }}" target="_blank" rel="noopener" class="social-link" title="{{ __('common.messages.instagram') }}" aria-label="Instagram">
+                <a href="{{ $instagram }}" target="_blank" rel="noopener" class="social-link" title="{{ __('common.messages.instagram') }}" aria-label="{{ __('common.messages.instagram') }}">
                   <i class="fab fa-instagram" aria-hidden="true"></i>
                 </a>
               @endif
@@ -278,13 +278,13 @@
 <section class="py-5 reveal">
   <div class="container">
     <div class="map-container">
-      <h3 class="mb-4">Find Us</h3>
+      <h3 class="mb-4">{{ __('common.pages.find_us') }}</h3>
       <div class="map-placeholder">
         <div class="map-placeholder-icon">🗺️</div>
-        <h5>Interactive Map</h5>
-        <p>Map integration coming soon. For now, you can find us at our address above.</p>
+        <h5>{{ __('common.pages.interactive_map') }}</h5>
+        <p>{{ __('common.pages.map_integration_coming') }}</p>
         <p class="small text-muted">
-          <strong>Address:</strong> 123 Commerce Street, Business District, City, State 12345
+          <strong>{{ __('common.fields.address') }}:</strong> {{ __('common.pages.address_example') }}
         </p>
       </div>
     </div>
