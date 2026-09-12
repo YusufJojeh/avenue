@@ -3,26 +3,25 @@
 <div class="dashboard-sales reveal">
     <div class="row g-4">
         <div class="col-12 col-lg-8">
-            <div class="crystal-card sales-chart-card p-4 h-100">
+            <div class="sales-chart-card p-4 h-100">
                 <div class="chart-header mb-4">
                     <h3 class="chart-title">تحليل المبيعات</h3>
                     <p class="chart-subtitle">أداء المبيعات خلال آخر 6 أشهر</p>
                 </div>
-                
+
                 <div class="chart-container">
                     <div class="chart-bars">
                         @foreach($sales as $index => $sale)
                         <div class="chart-bar-wrapper" data-value="{{ $sale['value'] }}" data-month="{{ $sale['month'] }}">
                             <div class="chart-bar">
                                 <div class="bar-fill" style="height: {{ ($sale['value'] / 3000) * 100 }}%"></div>
-                                <div class="bar-shine"></div>
                             </div>
                             <div class="bar-label">{{ $sale['month'] }}</div>
                             <div class="bar-value">{{ number_format($sale['value']) }}</div>
                         </div>
                         @endforeach
                     </div>
-                    
+
                     <div class="chart-grid">
                         <div class="grid-line"></div>
                         <div class="grid-line"></div>
@@ -31,7 +30,7 @@
                         <div class="grid-line"></div>
                     </div>
                 </div>
-                
+
                 <div class="chart-stats mt-4">
                     <div class="stat-item">
                         <div class="stat-label">إجمالي المبيعات</div>
@@ -48,64 +47,64 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-12 col-lg-4">
-            <div class="crystal-card quick-actions-card p-4 h-100">
+            <div class="quick-actions-card p-4 h-100">
                 <div class="actions-header mb-4">
                     <h3 class="actions-title">إجراءات سريعة</h3>
                     <p class="actions-subtitle">الوصول السريع للمهام المهمة</p>
                 </div>
-                
+
                 <div class="actions-list">
                     <a href="{{ route('platform.products.create') }}" class="action-item">
                         <div class="action-icon">
-                            <i class="bi bi-plus-circle"></i>
+                            <x-orchid-icon path="bs.plus-circle" />
                         </div>
                         <div class="action-content">
                             <div class="action-title">إضافة منتج جديد</div>
                             <div class="action-desc">إنشاء منتج جديد في المتجر</div>
                         </div>
                         <div class="action-arrow">
-                            <i class="bi bi-arrow-left"></i>
+                            <x-orchid-icon path="bs.arrow-left" />
                         </div>
                     </a>
-                    
+
                     <a href="{{ route('platform.categories.create') }}" class="action-item">
                         <div class="action-icon">
-                            <i class="bi bi-folder-plus"></i>
+                            <x-orchid-icon path="bs.folder-plus" />
                         </div>
                         <div class="action-content">
                             <div class="action-title">إضافة قسم جديد</div>
                             <div class="action-desc">تنظيم المنتجات في أقسام</div>
                         </div>
                         <div class="action-arrow">
-                            <i class="bi bi-arrow-left"></i>
+                            <x-orchid-icon path="bs.arrow-left" />
                         </div>
                     </a>
-                    
+
                     <a href="{{ route('platform.offers.create') }}" class="action-item">
                         <div class="action-icon">
-                            <i class="bi bi-percent"></i>
+                            <x-orchid-icon path="bs.percent" />
                         </div>
                         <div class="action-content">
                             <div class="action-title">إنشاء عرض جديد</div>
                             <div class="action-desc">عروض وخصومات للمنتجات</div>
                         </div>
                         <div class="action-arrow">
-                            <i class="bi bi-arrow-left"></i>
+                            <x-orchid-icon path="bs.arrow-left" />
                         </div>
                     </a>
-                    
+
                     <a href="{{ route('platform.slides.create') }}" class="action-item">
                         <div class="action-icon">
-                            <i class="bi bi-images"></i>
+                            <x-orchid-icon path="bs.images" />
                         </div>
                         <div class="action-content">
                             <div class="action-title">إضافة شريحة</div>
                             <div class="action-desc">شرائح العرض في الصفحة الرئيسية</div>
                         </div>
                         <div class="action-arrow">
-                            <i class="bi bi-arrow-left"></i>
+                            <x-orchid-icon path="bs.arrow-left" />
                         </div>
                     </a>
                 </div>
@@ -121,46 +120,9 @@
 }
 
 .sales-chart-card, .quick-actions-card {
-    position: relative;
-    overflow: hidden;
-    background: linear-gradient(135deg,
-        rgba(255,255,255,0.1) 0%,
-        rgba(255,255,255,0.05) 50%,
-        rgba(255,255,255,0.02) 100%);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 20px;
-    box-shadow:
-        0 8px 32px rgba(0,0,0,0.1),
-        inset 0 1px 0 rgba(255,255,255,0.2);
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.sales-chart-card::before, .quick-actions-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg,
-        transparent,
-        rgba(255,255,255,0.1),
-        transparent);
-    transition: left 0.6s ease;
-}
-
-.sales-chart-card:hover::before, .quick-actions-card:hover::before {
-    left: 100%;
-}
-
-.sales-chart-card:hover, .quick-actions-card:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow:
-        0 20px 40px rgba(0,0,0,0.15),
-        0 0 0 1px rgba(255,255,255,0.3),
-        inset 0 1px 0 rgba(255,255,255,0.3);
+    background: var(--bs-tertiary-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius-lg, 12px);
 }
 
 /* Chart Styles */
@@ -169,26 +131,27 @@
 }
 
 .chart-title {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 700;
-    color: var(--text);
+    color: var(--bs-body-color);
     margin-bottom: 0.5rem;
 }
 
 .chart-subtitle {
-    color: var(--muted);
+    color: var(--bs-secondary-color);
     margin-bottom: 0;
+    font-size: 0.9rem;
 }
 
 .chart-container {
     position: relative;
-    height: 300px;
+    height: 260px;
     margin: 2rem 0;
 }
 
 .chart-bars {
     display: flex;
-    align-items: end;
+    align-items: stretch;
     justify-content: space-around;
     height: 100%;
     padding: 0 1rem;
@@ -202,70 +165,46 @@
     align-items: center;
     flex: 1;
     max-width: 80px;
-    transition: all 0.3s ease;
-}
-
-.chart-bar-wrapper:hover {
-    transform: translateY(-5px);
 }
 
 .chart-bar {
-    width: 40px;
-    height: 100%;
+    width: 32px;
+    flex: 1 1 auto;
+    min-height: 0;
     position: relative;
     display: flex;
     align-items: end;
-    margin-bottom: 1rem;
+    margin: 0 auto 1rem;
 }
 
 .bar-fill {
     width: 100%;
-    background: linear-gradient(180deg, #F0C24B, #D9A92F);
-    border-radius: 8px 8px 0 0;
-    position: relative;
-    transition: all 0.6s ease;
-    animation: barGrow 1.5s ease-out forwards;
+    background: #B88A2A;
+    border-radius: 6px 6px 0 0;
     transform-origin: bottom;
+    animation: barGrow 0.5s ease-out;
 }
 
-.bar-shine {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg,
-        transparent,
-        rgba(255,255,255,0.3),
-        transparent);
-    transform: translateX(-100%);
-    transition: transform 0.6s ease;
-}
-
-.chart-bar-wrapper:hover .bar-shine {
-    transform: translateX(100%);
+[data-bs-theme="dark"] .bar-fill {
+    background: #D4AD55;
 }
 
 @keyframes barGrow {
-    from {
-        transform: scaleY(0);
-    }
-    to {
-        transform: scaleY(1);
-    }
+    from { transform: scaleY(0); }
+    to { transform: scaleY(1); }
 }
 
 .bar-label {
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     font-weight: 600;
-    color: var(--text);
+    color: var(--bs-body-color);
     text-align: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
 }
 
 .bar-value {
     font-size: 0.75rem;
-    color: var(--muted);
+    color: var(--bs-secondary-color);
     text-align: center;
 }
 
@@ -283,7 +222,7 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: rgba(255,255,255,0.1);
+    background: var(--bs-border-color);
 }
 
 .grid-line:nth-child(1) { top: 0%; }
@@ -301,33 +240,28 @@
 
 .stat-item {
     text-align: center;
-    padding: 1rem;
-    background: rgba(255,255,255,0.1);
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
+    padding: 0.85rem;
+    background: var(--bs-body-bg);
+    border-radius: 10px;
+    border: 1px solid var(--bs-border-color);
     flex: 1;
     min-width: 120px;
 }
 
-.stat-item:hover {
-    transform: translateY(-2px);
-    background: rgba(255,255,255,0.15);
-    border-color: rgba(255,255,255,0.3);
-}
-
 .stat-label {
-    font-size: 0.875rem;
-    color: var(--muted);
-    margin-bottom: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--bs-secondary-color);
+    margin-bottom: 0.35rem;
 }
 
 .stat-value {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     font-weight: 700;
-    color: #F0C24B;
+    color: #B88A2A;
+}
+
+[data-bs-theme="dark"] .stat-value {
+    color: #D4AD55;
 }
 
 /* Quick Actions Styles */
@@ -336,77 +270,67 @@
 }
 
 .actions-title {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 700;
-    color: var(--text);
+    color: var(--bs-body-color);
     margin-bottom: 0.5rem;
 }
 
 .actions-subtitle {
-    color: var(--muted);
+    color: var(--bs-secondary-color);
     margin-bottom: 0;
+    font-size: 0.9rem;
 }
 
 .actions-list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
 .action-item {
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 1rem;
-    background: rgba(255,255,255,0.1);
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    padding: 0.85rem 1rem;
+    background: var(--bs-body-bg);
+    border-radius: 10px;
+    border: 1px solid var(--bs-border-color);
     text-decoration: none;
-    color: var(--text);
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.action-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg,
-        transparent,
-        rgba(255,255,255,0.1),
-        transparent);
-    transition: left 0.6s ease;
-}
-
-.action-item:hover::before {
-    left: 100%;
+    color: var(--bs-body-color);
+    transition: border-color 0.15s ease;
 }
 
 .action-item:hover {
-    transform: translateY(-2px);
-    background: rgba(255,255,255,0.15);
-    border-color: rgba(255,255,255,0.3);
-    color: var(--text);
+    border-color: #B88A2A;
+    color: var(--bs-body-color);
     text-decoration: none;
 }
 
+[data-bs-theme="dark"] .action-item:hover {
+    border-color: #D4AD55;
+}
+
 .action-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, #F0C24B, #D9A92F);
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    background: var(--bs-tertiary-bg);
+    border: 1px solid var(--bs-border-color);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    font-size: 1.1rem;
+    color: #B88A2A;
     flex-shrink: 0;
+}
+
+.action-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+[data-bs-theme="dark"] .action-icon {
+    color: #D4AD55;
 }
 
 .action-content {
@@ -415,73 +339,44 @@
 
 .action-title {
     font-weight: 600;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.15rem;
+    font-size: 0.9rem;
 }
 
 .action-desc {
-    font-size: 0.875rem;
-    color: var(--muted);
+    font-size: 0.8rem;
+    color: var(--bs-secondary-color);
 }
 
 .action-arrow {
-    color: var(--muted);
-    transition: transform 0.3s ease;
+    color: var(--bs-secondary-color);
 }
 
-.action-item:hover .action-arrow {
-    transform: translateX(-5px);
-}
-
-/* Dark mode enhancements */
-html[data-theme="dark"] .sales-chart-card,
-html[data-theme="dark"] .quick-actions-card {
-    background: linear-gradient(135deg,
-        rgba(255,255,255,0.05) 0%,
-        rgba(255,255,255,0.02) 50%,
-        rgba(255,255,255,0.01) 100%);
-    border: 1px solid rgba(255,255,255,0.1);
-}
-
-html[data-theme="dark"] .stat-item,
-html[data-theme="dark"] .action-item {
-    background: rgba(255,255,255,0.05);
-    border-color: rgba(255,255,255,0.1);
-}
-
-html[data-theme="dark"] .stat-item:hover,
-html[data-theme="dark"] .action-item:hover {
-    background: rgba(255,255,255,0.08);
-    border-color: rgba(255,255,255,0.15);
+.action-arrow svg {
+    width: 14px;
+    height: 14px;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
     .chart-container {
-        height: 250px;
+        height: 220px;
     }
-    
+
     .chart-bars {
         padding: 0 0.5rem;
     }
-    
+
     .chart-bar {
-        width: 30px;
+        width: 26px;
     }
-    
+
     .chart-stats {
         flex-direction: column;
     }
-    
+
     .stat-item {
         min-width: auto;
-    }
-    
-    .actions-list {
-        gap: 0.75rem;
-    }
-    
-    .action-item {
-        padding: 0.75rem;
     }
 }
 </style>
