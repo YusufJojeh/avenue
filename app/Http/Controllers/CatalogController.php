@@ -183,6 +183,9 @@ class CatalogController extends Controller
             }
         };
 
+        $brandName = $filters['brand'] ? $brands->firstWhere('slug', $filters['brand'])?->name : null;
+        $categoryName = $filters['category'] ? $categories->firstWhere('slug', $filters['category'])?->name : null;
+
         return view('products.index', [
             'products' => $productsWithPagination,
             'pagination' => $result['pagination'],
@@ -192,6 +195,7 @@ class CatalogController extends Controller
             'brand' => $filters['brand'],
             'category' => $filters['category'],
             'sort' => $filters['sort'],
+            'seo' => SeoData::products($filters['search'], $categoryName, $brandName),
         ]);
     }
 
@@ -358,7 +362,7 @@ class CatalogController extends Controller
             'brand'      => $slug,
             'category'   => null,
             'sort'       => 'latest',
-            'pageTitle'  => 'Brand: '.$brand->name,
+            'pageTitle'  => $brand->name,
             'seo'        => SeoData::brand($brand),
         ]);
     }

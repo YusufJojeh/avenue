@@ -39,6 +39,28 @@ class SeoData
         return self::meta($title, $description, $canonical, null, 'website', LocalizedUrl::alternates());
     }
 
+    public static function products(string $search = '', ?string $categoryName = null, ?string $brandName = null): array
+    {
+        $site = config('app.name', 'AVENUE');
+        $labelParts = array_filter([$categoryName, $brandName]);
+
+        if ($search !== '') {
+            $title = "Search results for \"{$search}\" - {$site}";
+            $description = "Search results for \"{$search}\" at {$site}.";
+        } elseif ($labelParts) {
+            $label = implode(' - ', $labelParts);
+            $title = "{$label} - {$site}";
+            $description = "Shop {$label} products at {$site}.";
+        } else {
+            $title = "All Products - {$site}";
+            $description = "Browse all products available at {$site}.";
+        }
+
+        $canonical = self::paginated(route('products.index'));
+
+        return self::meta($title, Str::limit($description, 160, ''), $canonical, null, 'website', LocalizedUrl::alternates());
+    }
+
     public static function productSchemas(object $product): array
     {
         $url = route('products.show', ['slug' => LocalizedUrl::slug($product, app()->getLocale())]);

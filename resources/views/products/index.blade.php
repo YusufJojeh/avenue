@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $pageTitle ?? 'Products')
+@section('title', $seo['title'] ?? $pageTitle ?? 'Products')
 
 @push('styles')
 <style>

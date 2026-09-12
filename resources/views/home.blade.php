@@ -41,6 +41,10 @@
 
 @section('content')
 
+@unless(isset($visibility['hero']) && $visibility['hero'] && isset($mainSlide) && !empty($mainSlide->title))
+  <h1 class="visually-hidden">{{ $siteName ?? 'AVENUE' }} - Premium E-Commerce Store</h1>
+@endunless
+
 {{-- ====================== HERO SECTION ====================== --}}
 @if(isset($visibility['hero']) && $visibility['hero'] && isset($mainSlide))
   <section class="hero-section reveal">
