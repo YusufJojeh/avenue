@@ -53,9 +53,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   {{-- Brand Fonts (non-blocking) --}}
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Montserrat:wght@500;700&display=swap">
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet"></noscript>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Cinzel:wght@600;700&family=Montserrat:wght@500;700&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Cinzel:wght@600;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Cinzel:wght@600;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet"></noscript>
 
   {{-- Font Awesome (non-blocking, loads solid + brands subsets) --}}
   <link rel="preload" as="image" href="{{ asset('brand/avenue.svg') }}">

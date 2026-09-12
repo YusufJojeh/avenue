@@ -13,7 +13,7 @@
             <div><strong>Path:</strong> {{ $image_path }}</div>
             <div><strong>URL:</strong> <a href="{{ $image_url }}" target="_blank">{{ $image_url }}</a></div>
             <div><strong>Status:</strong>
-                <span class="image-status-indicator">Checking...</span>
+                <span class="image-status-indicator">Checking&hellip;</span>
             </div>
         </div>
     </div>

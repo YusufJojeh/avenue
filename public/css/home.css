@@ -143,6 +143,10 @@ html[data-theme="dark"] .crystal-card:hover {
   text-align: center;
 }
 
+html[lang="ar"] .section-title {
+  font-family: 'Cairo', sans-serif;
+}
+
 .section-title::after {
   content: '';
   position: absolute;
