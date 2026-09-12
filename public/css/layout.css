@@ -756,9 +756,9 @@ html[lang="ar"] .av-product-card__name {
     }
 
     .amazon-search-submit-btn:hover {
-      background: linear-gradient(135deg, var(--gold), #ffd700);
+      background: var(--av-accent, #B88A2A);
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(240, 194, 75, 0.3);
+      box-shadow: var(--av-shadow-subtle, 0 4px 12px rgba(240, 194, 75, 0.3));
     }
 
     .amazon-search-submit-btn:hover::before {
@@ -1835,65 +1835,31 @@ html[lang="ar"] .av-product-card__name {
 
     /* Gold Buttons */
     .btn-vel-gold{
-      background: linear-gradient(135deg, #FFF8DC, #FFD700, #FFA500);
+      background: var(--av-accent, #B88A2A);
       color: #111216;
       border: none;
       font-weight: 600;
-      box-shadow: 0 4px 12px rgba(255,215,0,0.3), inset 0 1px 0 rgba(255,255,255,0.4);
+      box-shadow: var(--av-shadow-subtle, 0 2px 8px rgba(0,0,0,.06));
       transition: all var(--speed) ease;
-      position: relative;
-      overflow: hidden;
     }
 
     .btn-vel-gold:hover{
       transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(255,215,0,0.4), inset 0 1px 0 rgba(255,255,255,0.6);
+      box-shadow: var(--av-shadow-elevated, 0 12px 32px rgba(0,0,0,.12));
       filter: brightness(1.05);
     }
 
     .btn-vel-outline{
       color: var(--text);
-      border: 2px solid;
-      border-image: linear-gradient(45deg, #FFF8DC, #FFD700, #FFA500, #FFD700, #FFF8DC) 1;
-      background: linear-gradient(90deg, rgba(255,215,0,0.08), transparent);
+      border: 2px solid var(--av-accent, #B88A2A);
+      background: transparent;
       transition: all var(--speed) ease;
-      position: relative;
-      overflow: hidden;
-      box-shadow:
-        0 0 20px rgba(255,215,0,0.2),
-        inset 0 0 20px rgba(255,215,0,0.05);
-    }
-
-    .btn-vel-outline::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg,
-        transparent,
-        rgba(255,215,0,0.1),
-        rgba(255,215,0,0.3),
-        rgba(255,215,0,0.1),
-        transparent);
-      transition: left 0.6s ease;
-      filter: blur(0.5px);
     }
 
     .btn-vel-outline:hover{
-      background: linear-gradient(90deg, rgba(255,215,0,0.15), transparent 70%);
-      border-image: linear-gradient(45deg, #FFA500, #FFD700, #FFF8DC, #FFD700, #FFA500) 1;
-      transform: translateY(-3px) scale(1.02);
-      box-shadow:
-        0 12px 30px rgba(255,215,0,0.4),
-        0 0 40px rgba(255,215,0,0.2),
-        inset 0 0 30px rgba(255,215,0,0.1);
-      filter: brightness(1.1) saturate(1.2);
-    }
-
-    .btn-vel-outline:hover::before {
-      left: 100%;
+      background: color-mix(in srgb, var(--av-accent, #B88A2A) 10%, transparent);
+      transform: translateY(-2px);
+      box-shadow: var(--av-shadow-subtle, 0 2px 8px rgba(0,0,0,.06));
     }
 
     /* Professional UI/UX Animations - Eye-Friendly */
@@ -1955,9 +1921,7 @@ html[lang="ar"] .av-product-card__name {
 
     /* Footer */
     .vel-footer {
-      background:
-        radial-gradient(800px 400px at 95% 0%, rgba(240,194,75,0.08), transparent 60%),
-        var(--surface);
+      background: var(--surface);
       border-top: 1px solid var(--border);
       position: relative;
       overflow: hidden;
@@ -1970,10 +1934,7 @@ html[lang="ar"] .av-product-card__name {
       left: 0;
       right: 0;
       height: 1px;
-      background: linear-gradient(90deg,
-        transparent 0%,
-        rgba(240,194,75,0.3) 50%,
-        transparent 100%);
+      background: color-mix(in srgb, var(--av-accent, #B88A2A) 30%, transparent);
     }
 
     .footer-head {
@@ -1991,7 +1952,7 @@ html[lang="ar"] .av-product-card__name {
       left: 0;
       width: 30px;
       height: 2px;
-      background: linear-gradient(90deg, #f0c24b, transparent);
+      background: var(--av-accent, #B88A2A);
       border-radius: 1px;
       transition: width 0.3s ease;
     }
@@ -2249,9 +2210,7 @@ html[lang="ar"] .av-product-card__name {
 
     /* Dark Mode Footer Enhancements */
     html[data-theme="dark"] .vel-footer {
-      background:
-        radial-gradient(800px 400px at 95% 0%, rgba(240,194,75,0.12), transparent 60%),
-        rgba(17, 18, 22, 0.98);
+      background: rgba(17, 18, 22, 0.98);
       border-top-color: rgba(255, 255, 255, 0.1);
     }
 
@@ -2318,9 +2277,7 @@ html[lang="ar"] .av-product-card__name {
 
     /* Light Mode Footer Enhancements */
     html[data-theme="light"] .vel-footer {
-      background:
-        radial-gradient(800px 400px at 95% 0%, rgba(240,194,75,0.06), transparent 60%),
-        #f8f9fa;
+      background: #f8f9fa;
       border-top-color: rgba(0, 0, 0, 0.1);
     }
 
@@ -2419,11 +2376,9 @@ html[lang="ar"] .av-product-card__name {
       border-radius: 50px;
       text-decoration: none;
       color: #ffffff;
-      background: linear-gradient(135deg, #25D366, #128C7E);
-      border: 1px solid rgba(37, 211, 102, 0.3);
-      box-shadow:
-        0 8px 24px rgba(37, 211, 102, 0.3),
-        0 0 0 1px rgba(37, 211, 102, 0.1);
+      background: var(--av-success, #287A4B);
+      border: 1px solid transparent;
+      box-shadow: var(--av-shadow-subtle, 0 2px 8px rgba(0,0,0,.06));
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       font-weight: 600;
       font-size: 0.9rem;
@@ -2447,12 +2402,9 @@ html[lang="ar"] .av-product-card__name {
 
     .wa-fab:hover {
       transform: translateY(-3px) scale(1.05);
-      box-shadow:
-        0 12px 32px rgba(37, 211, 102, 0.4),
-        0 0 0 1px rgba(37, 211, 102, 0.2);
+      box-shadow: var(--av-shadow-elevated, 0 12px 32px rgba(0,0,0,.12));
       color: #ffffff;
       text-decoration: none;
-      border-color: rgba(37, 211, 102, 0.5);
     }
 
     .wa-fab:hover::before {
@@ -2461,9 +2413,7 @@ html[lang="ar"] .av-product-card__name {
 
     .wa-fab:active {
       transform: translateY(-1px) scale(1.02);
-      box-shadow:
-        0 6px 20px rgba(37, 211, 102, 0.3),
-        0 0 0 1px rgba(37, 211, 102, 0.2);
+      box-shadow: var(--av-shadow-subtle, 0 2px 8px rgba(0,0,0,.06));
     }
 
     .wa-fab span {
@@ -2493,56 +2443,6 @@ html[lang="ar"] .av-product-card__name {
       border-radius: 50%;
       mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.86 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488" fill="%2325D366"/></svg>') center/contain no-repeat;
       -webkit-mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.86 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488" fill="%2325D366"/></svg>') center/contain no-repeat;
-    }
-
-    /* Light Theme WhatsApp Button */
-    html[data-theme="light"] .wa-fab {
-      background: linear-gradient(135deg, #25D366, #128C7E);
-      border-color: rgba(37, 211, 102, 0.3);
-      box-shadow:
-        0 8px 24px rgba(37, 211, 102, 0.25),
-        0 0 0 1px rgba(37, 211, 102, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    }
-
-    html[data-theme="light"] .wa-fab:hover {
-      box-shadow:
-        0 12px 32px rgba(37, 211, 102, 0.35),
-        0 0 0 1px rgba(37, 211, 102, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
-      border-color: rgba(37, 211, 102, 0.4);
-    }
-
-    html[data-theme="light"] .wa-fab:active {
-      box-shadow:
-        0 6px 20px rgba(37, 211, 102, 0.25),
-        0 0 0 1px rgba(37, 211, 102, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    }
-
-    /* Dark Theme WhatsApp Button */
-    html[data-theme="dark"] .wa-fab {
-      background: linear-gradient(135deg, #25D366, #128C7E);
-      border-color: rgba(37, 211, 102, 0.4);
-      box-shadow:
-        0 8px 24px rgba(37, 211, 102, 0.4),
-        0 0 0 1px rgba(37, 211, 102, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    }
-
-    html[data-theme="dark"] .wa-fab:hover {
-      box-shadow:
-        0 12px 32px rgba(37, 211, 102, 0.5),
-        0 0 0 1px rgba(37, 211, 102, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15);
-      border-color: rgba(37, 211, 102, 0.5);
-    }
-
-    html[data-theme="dark"] .wa-fab:active {
-      box-shadow:
-        0 6px 20px rgba(37, 211, 102, 0.4),
-        0 0 0 1px rgba(37, 211, 102, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
 
     /* Enhanced icon styling for both themes */
@@ -2733,9 +2633,7 @@ html[lang="ar"] .av-product-card__name {
 
     /* Dark Mode Enhancements for All Elements */
     html[data-theme="dark"] .product-card {
-      background: linear-gradient(135deg,
-        rgba(240,194,75,0.08) 0%,
-        rgba(120,119,198,0.08) 100%);
+      background: var(--av-surface, #191B1F);
       border: 1px solid rgba(255,255,255,0.1);
     }
 
@@ -2744,10 +2642,7 @@ html[lang="ar"] .av-product-card__name {
     }
 
     html[data-theme="dark"] .crystal-card {
-      background: linear-gradient(135deg,
-        rgba(255,255,255,0.05) 0%,
-        rgba(255,255,255,0.02) 50%,
-        rgba(255,255,255,0.01) 100%);
+      background: rgba(255,255,255,0.03);
       border-color: rgba(255,255,255,0.1);
     }
 
@@ -2760,19 +2655,15 @@ html[lang="ar"] .av-product-card__name {
     }
 
     html[data-theme="dark"] .hero-section {
-      background: linear-gradient(135deg,
-        rgba(240,194,75,0.1) 0%,
-        rgba(17,18,22,0.95) 100%);
+      background: rgba(17,18,22,0.95);
     }
 
     html[data-theme="dark"] .cta-section {
-      background: linear-gradient(135deg,
-        rgba(240,194,75,0.15) 0%,
-        rgba(17,18,22,0.98) 100%);
+      background: rgba(17,18,22,0.98);
     }
 
     html[data-theme="dark"] .sale-badge {
-      background: linear-gradient(135deg, #10b981, #059669);
+      background: var(--av-error, #E47777);
       color: #ffffff;
     }
 
@@ -2782,7 +2673,7 @@ html[lang="ar"] .av-product-card__name {
     }
 
     html[data-theme="dark"] .btn-vel-outline:hover {
-      background: linear-gradient(90deg, rgba(240,194,75,0.2), transparent);
+      background: color-mix(in srgb, var(--av-accent, #D4AD55) 15%, transparent);
       color: var(--gold);
     }
 
@@ -3100,7 +2991,7 @@ html[lang="ar"] .av-product-card__name {
     }
 
     html[data-theme="dark"] .btn-vel-outline:hover {
-      background: linear-gradient(90deg, rgba(240,194,75,0.2), transparent);
+      background: color-mix(in srgb, var(--av-accent, #D4AD55) 15%, transparent);
       color: var(--gold);
     }
 
@@ -3246,14 +3137,14 @@ html[lang="ar"] .av-product-card__name {
       position: absolute;
       top: 12px;
       left: 12px;
-      background: linear-gradient(135deg, #ff4757, #ff3838);
+      background: var(--av-error, #B53A3A);
       color: white;
       padding: 0.25rem 0.75rem;
       border-radius: 20px;
       font-size: 0.75rem;
       font-weight: 700;
       z-index: 10;
-      box-shadow: 0 2px 8px rgba(255,71,87,0.3);
+      box-shadow: var(--av-shadow-subtle, 0 2px 8px rgba(0,0,0,.06));
     }
 
     .product-image-wrapper {
@@ -3405,15 +3296,15 @@ html[lang="ar"] .av-product-card__name {
     }
 
     .product-actions .btn-primary {
-      background: linear-gradient(135deg, var(--gold), #f59e0b);
+      background: var(--av-accent, #B88A2A);
       border: none;
       color: #111216;
     }
 
     .product-actions .btn-primary:hover {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
+      background: color-mix(in srgb, var(--av-accent, #B88A2A) 85%, black);
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(240,194,75,0.3);
+      box-shadow: var(--av-shadow-subtle, 0 4px 12px rgba(240,194,75,0.3));
     }
 
     .product-actions .btn-outline-secondary {
@@ -3944,7 +3835,7 @@ html[lang="ar"] .av-product-card__name {
   bottom: 0;
   width: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, var(--gold, #f0c24b), transparent);
+  background: var(--av-accent, #B88A2A);
   transition: width .25s ease;
 }
 
@@ -4124,7 +4015,7 @@ html:not([data-theme="dark"]) .language-switcher-menu .dropdown-item {
 .premium-mega-item {
   border-radius: 12px;
   border: 1px solid rgba(240, 194, 75, 0.12);
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(240,194,75,0.03));
+  background: color-mix(in srgb, var(--av-accent, #B88A2A) 3%, transparent);
   overflow: hidden;
   transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
