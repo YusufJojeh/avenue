@@ -34,61 +34,29 @@
   box-shadow: 0 16px 40px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.3);
 }
 
-/* Hero Section */
+/* Hero Section — V2: one calm campaign leader, gold as accent only */
 .hero-section {
   position: relative;
-  min-height: 80vh;
+  min-height: 70vh;
   display: flex;
   align-items: center;
-  overflow: hidden;
+  background: var(--av-surface, var(--surface));
 }
 
-.hero-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background:
-    radial-gradient(circle at 20% 80%, rgba(240,194,75,0.15) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(120,119,198,0.1) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(255,255,255,0.05) 0%, transparent 50%);
+.hero-copy {
+  max-width: 560px;
 }
-
-.floating-element {
-  position: absolute;
-  opacity: 0.4;
-  pointer-events: none;
-  color: var(--gold);
-}
-
-.floating-el-1 { top: 20%; left: 10%; }
-.floating-el-2 { top: 60%; right: 15%; }
-.floating-el-3 { top: 30%; right: 25%; }
 
 .hero-title {
-  background: linear-gradient(135deg, var(--text) 0%, var(--gold) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--av-text, var(--text));
 }
 
 .hero-subtitle {
-  color: var(--muted);
+  color: var(--av-text-secondary, var(--muted));
 }
 
-/* Dark Mode Hero Section */
 html[data-theme="dark"] .hero-section {
-  background: linear-gradient(135deg,
-    rgba(240,194,75,0.1) 0%,
-    rgba(17,18,22,0.95) 100%);
-}
-
-html[data-theme="dark"] .hero-bg {
-  background:
-    radial-gradient(circle at 20% 80%, rgba(240,194,75,0.12) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(120,119,198,0.08) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(255,255,255,0.03) 0%, transparent 50%);
+  background: var(--av-surface, var(--surface));
 }
 
 /* Dark Mode CTA Section */
@@ -131,40 +99,34 @@ html[data-theme="dark"] .crystal-card:hover {
   transform: scale(1.05);
 }
 
-/* Category Cards */
+/* Category Cards — V2: flat surface, fine border, no glow */
 .category-card {
-  background: linear-gradient(135deg,
-    rgba(240,194,75,0.1) 0%,
-    rgba(120,119,198,0.1) 100%);
-  border: 1px solid rgba(240,194,75,0.3);
-  border-radius: 24px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.1), inset 0 1px 0 rgba(240,194,75,0.2);
+  background: var(--av-surface, var(--surface));
+  border: 1px solid var(--av-border, var(--border));
+  border-radius: var(--av-radius-card, 10px);
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: border-color 0.2s ease, transform 0.2s ease;
   position: relative;
 }
 
 .category-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 40px rgba(0,0,0,0.15), 0 0 0 1px rgba(240,194,75,0.4);
+  transform: translateY(-2px);
+  border-color: var(--av-accent, var(--gold));
 }
 
-/* Offer Cards */
+/* Offer Cards — V2: flat surface, fine border, no glow */
 .offer-card {
-  background: linear-gradient(135deg,
-    rgba(240,194,75,0.1) 0%,
-    rgba(120,119,198,0.1) 100%);
-  border: 1px solid rgba(240,194,75,0.3);
-  border-radius: 24px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.1), inset 0 1px 0 rgba(240,194,75,0.2);
+  background: var(--av-surface, var(--surface));
+  border: 1px solid var(--av-border, var(--border));
+  border-radius: var(--av-radius-card, 10px);
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: border-color 0.2s ease, transform 0.2s ease;
   position: relative;
 }
 
 .offer-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 40px rgba(0,0,0,0.15), 0 0 0 1px rgba(240,194,75,0.4);
+  transform: translateY(-2px);
+  border-color: var(--av-accent, var(--gold));
 }
 
 /* Section Titles */
@@ -368,21 +330,15 @@ html[data-theme="dark"] .crystal-card:hover {
 }
 
 /* Dark mode card styling */
-html[data-theme="dark"] .crystal-card,
 html[data-theme="dark"] .category-card,
 html[data-theme="dark"] .offer-card {
-  background: linear-gradient(135deg,
-    rgba(240,194,75,0.1) 0%,
-    rgba(120,119,198,0.1) 100%);
-  border-color: rgba(240,194,75,0.3);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  background: var(--av-surface, var(--surface));
+  border-color: var(--av-border, var(--border));
 }
 
-html[data-theme="dark"] .crystal-card:hover,
 html[data-theme="dark"] .category-card:hover,
 html[data-theme="dark"] .offer-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(240,194,75,0.4);
+  border-color: var(--av-accent, var(--gold));
 }
 
 html[data-theme="dark"] .product-card .card-body,

@@ -423,7 +423,7 @@
           <div class="row g-4">
             @foreach($products as $product)
               <div class="col-6 col-md-4">
-                @includeIf('partials.product-card', ['p'=>$product])
+                <x-product-card :product="$product" />
               </div>
             @endforeach
           </div>

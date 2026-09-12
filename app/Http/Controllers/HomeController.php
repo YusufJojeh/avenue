@@ -36,7 +36,7 @@ class HomeController extends Controller
             $categories = $this->performance->getCachedCategories();
             
             // Convert cached arrays to objects for compatibility with views
-            $specialProducts = collect($featuredProducts)->map(function ($product) {
+            $toProductObject = function ($product) {
                 $productObj = (object) $product;
                 // Convert nested arrays to objects
                 if (isset($product['brand']) && is_array($product['brand'])) {
@@ -46,7 +46,9 @@ class HomeController extends Controller
                     $productObj->category = (object) $product['category'];
                 }
                 return $productObj;
-            });
+            };
+            $specialProducts = collect($featuredProducts)->map($toProductObject);
+            $latestProducts = collect($latestProducts['data'])->map($toProductObject);
             $categoriesCollection = collect($categories)->map(function ($category) {
                 return (object) $category;
             });
@@ -67,7 +69,7 @@ class HomeController extends Controller
             return view('home', [
                 'specialProducts' => $specialProducts,
                 'featuredProducts' => $featuredProducts,
-                'latestProducts' => $latestProducts['data'],
+                'latestProducts' => $latestProducts,
                 'navigation' => $navigation,
                 'settings' => $siteSettings,
                 'categories' => $categoriesCollection,
@@ -90,7 +92,7 @@ class HomeController extends Controller
             return view('home', [
                 'specialProducts' => collect([]),
                 'featuredProducts' => [],
-                'latestProducts' => ['data' => []],
+                'latestProducts' => collect([]),
                 'navigation' => ['categories' => [], 'brands' => []],
                 'settings' => [],
                 'categories' => collect([]),
@@ -122,20 +124,54 @@ class HomeController extends Controller
 
         // Use cached search results
         $result = $this->performance->getCachedProducts($filters, 12, $page);
-        
+
+        // Convert cached arrays to objects for compatibility with views
+        $products = collect($result['data'])->map(function ($product) {
+            $productObj = (object) $product;
+            if (isset($product['brand']) && is_array($product['brand'])) {
+                $productObj->brand = (object) $product['brand'];
+            }
+            if (isset($product['category']) && is_array($product['category'])) {
+                $productObj->category = (object) $product['category'];
+            }
+            return $productObj;
+        });
+
+        // Create a LengthAwarePaginator manually since we're using cached data
+        $pagination = $result['pagination'] ?? [];
+        $currentPage = $pagination['current_page'] ?? 1;
+        $perPage = $pagination['per_page'] ?? 12;
+        $total = $pagination['total'] ?? $products->count();
+
+        $products = new \Illuminate\Pagination\LengthAwarePaginator(
+            $products,
+            $total,
+            $perPage,
+            $currentPage,
+            [
+                'path' => request()->url(),
+                'pageName' => 'page',
+            ]
+        );
+
+        $products->withQueryString();
+
         // Get search suggestions
         $suggestions = $this->performance->getCachedSearchSuggestions($query, 10);
-        
+
         // Get cached navigation for filters
         $navigation = $this->performance->getCachedNavigation();
 
+        // Convert cached arrays to objects for compatibility with views
+        $brands = collect($navigation['brands'])->map(fn ($brand) => (object) $brand);
+        $categories = collect($navigation['categories'])->map(fn ($category) => (object) $category);
+
         return view('search.results', [
-            'products' => $result['data'],
-            'pagination' => $result['pagination'],
+            'products' => $products,
             'q' => $query,
             'suggestions' => $suggestions,
-            'brands' => $navigation['brands'],
-            'categories' => $navigation['categories'],
+            'brands' => $brands,
+            'categories' => $categories,
             'sort' => $filters['sort'],
             'category' => null,
             'brand' => null,

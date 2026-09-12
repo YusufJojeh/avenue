@@ -533,6 +533,7 @@
               loading="eager"
               fetchpriority="high"
               decoding="async"
+              data-fallback="{{ asset('images/placeholder-product.png') }}"
               onclick="openImageModal(this.src)"
             >
       </div>
@@ -581,12 +582,6 @@
         <div class="product-info">
           {{-- Title --}}
           <h1 class="product-title">{{ $product->name }}</h1>
-
-          {{-- Rating (placeholder) --}}
-          <div class="product-rating">
-            <span>★★★★★</span>
-            <span>(0 reviews)</span>
-          </div>
 
           {{-- Price --}}
           <div class="product-price-section">
@@ -726,7 +721,7 @@
         <div class="row g-4">
           @foreach($related as $p)
             <div class="col-6 col-md-4 col-lg-3">
-              @include('partials.product-card', ['p' => $p])
+              <x-product-card :product="$p" />
             </div>
           @endforeach
         </div>
@@ -754,6 +749,7 @@
     mainImage.style.transition = 'opacity 0.3s ease';
 
     setTimeout(() => {
+      delete mainImage.dataset.fallen;
       mainImage.src = imageUrl;
       mainImage.alt = imageAlt || '{{ $product->name }}';
       mainImage.style.opacity = '1';

@@ -44,29 +44,10 @@
 {{-- ====================== HERO SECTION ====================== --}}
 @if(isset($visibility['hero']) && $visibility['hero'] && isset($mainSlide))
   <section class="hero-section reveal">
-    <div class="hero-bg"></div>
-
-    {{-- Decorative Floating Elements --}}
-    <div class="floating-element floating-el-1" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="currentColor" width="32" height="32">
-        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-      </svg>
-    </div>
-    <div class="floating-element floating-el-2" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-      </svg>
-    </div>
-    <div class="floating-element floating-el-3" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
-        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-      </svg>
-    </div>
-
     <div class="container">
       <div class="row align-items-center">
         <div class="col-lg-6">
-          <div class="crystal-card p-4 p-md-5">
+          <div class="hero-copy p-4 p-md-5">
             @if(!empty($mainSlide->title))
               <h1 class="display-4 fw-bold mb-3 hero-title">
                 {{ $mainSlide->title }}
@@ -87,16 +68,14 @@
         </div>
         <div class="col-lg-6">
           @if($mainSlide->image_url)
-            <div class="crystal-card p-3">
-              <img
-                src="{{ $mainSlide->image_url }}"
-                class="w-100 rounded-4 hero-card-img"
-                alt="{{ $mainSlide->title ?? 'Hero' }}"
-                loading="eager"
-                fetchpriority="high"
-                decoding="async"
-              >
-            </div>
+            <img
+              src="{{ $mainSlide->image_url }}"
+              class="w-100 rounded-4 hero-card-img"
+              alt="{{ $mainSlide->title ?? 'Hero' }}"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+            >
           @endif
         </div>
       </div>
@@ -104,8 +83,10 @@
   </section>
           @endif
 
-{{-- ====================== SLIDER SECTION ====================== --}}
-@if(isset($visibility['slider']) && $visibility['slider'] && isset($sliderSlides) && $sliderSlides->count())
+{{-- ====================== SLIDER SECTION ======================
+     V2: the campaign hero and this carousel must never both lead —
+     only show the carousel when there is no hero to compete with. --}}
+@if(isset($visibility['slider']) && $visibility['slider'] && isset($sliderSlides) && $sliderSlides->count() && !(isset($visibility['hero']) && $visibility['hero'] && isset($mainSlide)))
   <section class="py-5 reveal">
     <div class="container">
       <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
@@ -163,7 +144,7 @@
         <div class="row g-4">
           @foreach($specialProducts as $p)
             <div class="col-6 col-md-3">
-              @includeIf('partials.product-card', ['p'=>$p])
+              <x-product-card :product="$p" />
             </div>
           @endforeach
         </div>
@@ -236,7 +217,7 @@
         <div class="row g-4">
           @foreach($latestProducts as $p)
             <div class="col-6 col-md-3">
-              @includeIf('partials.product-card', ['p'=>$p])
+              <x-product-card :product="$p" />
             </div>
           @endforeach
         </div>
@@ -252,7 +233,7 @@
         <div class="row g-4">
           @foreach($externalBrandProducts as $p)
             <div class="col-6 col-md-3">
-              @includeIf('partials.product-card', ['p'=>$p])
+              <x-product-card :product="$p" />
             </div>
           @endforeach
         </div>

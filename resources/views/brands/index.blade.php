@@ -302,7 +302,7 @@
 
                 <div class="brand-meta">
                   <div class="brand-meta-item">
-                    <span>📦</span>
+                    <span aria-hidden="true">📦</span>
                     <span>{{ $brand->products_count ?? 0 }}</span>
                   </div>
                   <div class="brand-meta-item">

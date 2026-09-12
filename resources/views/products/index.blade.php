@@ -217,9 +217,14 @@
   .view-btn {
     background: transparent;
     border: none;
+    min-width: 44px;
+    min-height: 44px;
     padding: 0.5rem 1rem;
     border-radius: 8px;
     color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: all 0.3s ease;
     cursor: pointer;
   }
@@ -599,12 +604,12 @@
         {{-- View Toggle --}}
         <div class="col-6 col-md-3 col-lg-2">
           <label class="filter-label">View</label>
-          <div class="view-toggle">
-            <button type="button" class="view-btn {{ $view === 'grid' ? 'active' : '' }}" data-view="grid">
-              <i class="fas fa-th"></i>
+          <div class="view-toggle" role="group" aria-label="View">
+            <button type="button" class="view-btn {{ $view === 'grid' ? 'active' : '' }}" data-view="grid" aria-label="Grid view" aria-pressed="{{ $view === 'grid' ? 'true' : 'false' }}">
+              <i class="fas fa-th" aria-hidden="true"></i>
             </button>
-            <button type="button" class="view-btn {{ $view === 'list' ? 'active' : '' }}" data-view="list">
-              <i class="fas fa-list"></i>
+            <button type="button" class="view-btn {{ $view === 'list' ? 'active' : '' }}" data-view="list" aria-label="List view" aria-pressed="{{ $view === 'list' ? 'true' : 'false' }}">
+              <i class="fas fa-list" aria-hidden="true"></i>
             </button>
           </div>
         </div>
@@ -657,7 +662,7 @@
   <div class="products-grid {{ $view === 'list' ? 'list-view' : '' }}" id="productsGrid">
     @forelse($products as $p)
       <div class="product-card-wrapper">
-        @includeIf('partials.product-card', ['p'=>$p])
+        <x-product-card :product="$p" />
       </div>
     @empty
       <div class="col-12">
@@ -695,8 +700,12 @@ document.addEventListener('DOMContentLoaded', function() {
       const view = this.dataset.view;
 
       // Update active state
-      viewButtons.forEach(btn => btn.classList.remove('active'));
+      viewButtons.forEach(btn => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-pressed', 'false');
+      });
       this.classList.add('active');
+      this.setAttribute('aria-pressed', 'true');
 
       // Update grid class
       if (view === 'list') {

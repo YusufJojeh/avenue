@@ -152,28 +152,7 @@
   <div class="row g-3">
     @forelse($products as $product)
       <div class="col-6 col-md-3">
-        @includeIf('partials.product-card', ['p' => $product])
-
-        @unless(View::exists('partials.product-card'))
-          {{-- Fallback card --}}
-          <a href="{{ route('products.show', ['slug' => $product->slug]) }}" class="card product-card h-100 text-decoration-none">
-            <div class="thumb">
-              <img src="{{ $product->primary_image_url }}" alt="{{ $product->name }}" loading="lazy">
-            </div>
-            <div class="card-body">
-              <div class="fw-semibold text-truncate mb-1">{{ $product->name }}</div>
-              <div class="small text-muted mb-1">{{ $product->brand->name ?? '' }}</div>
-              <div class="small">
-                @if(!is_null($product->sale_price) && $product->sale_price > 0 && $product->sale_price < $product->price)
-                  <span class="price-cut me-1">{{ number_format($product->price, 2) }}</span>
-                  <span class="fw-semibold">{{ number_format($product->sale_price, 2) }}</span>
-                @else
-                  <span class="fw-semibold">{{ number_format($product->price, 2) }}</span>
-                @endif
-              </div>
-            </div>
-          </a>
-        @endunless
+        <x-product-card :product="$product" />
       </div>
     @empty
       <div class="col-12">

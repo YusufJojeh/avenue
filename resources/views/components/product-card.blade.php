@@ -1,114 +1,59 @@
-{{-- Enhanced Product Card Component --}}
-@props(['product', 'showActions' => true, 'showRating' => true, 'showBrand' => true])
+{{-- Avenue V2 ProductCard — one shared card for all discovery surfaces (Phase B). --}}
+@props(['product'])
 
-<div class="product-card h-100"
+@php
+  $productUrl = route('products.show', ['slug' => $product->slug]);
+  $image = $product->primary_image_url ?? asset('images/placeholder-product.png');
+  $hasSale = !is_null($product->sale_price) && $product->sale_price > 0 && $product->sale_price < $product->price;
+  $discountPercent = $hasSale ? round((($product->price - $product->sale_price) / $product->price) * 100) : 0;
+@endphp
+
+<div class="av-product-card"
      data-product-id="{{ $product->id }}"
      data-product-name="{{ $product->name }}"
      data-product-price="{{ $product->price }}"
      data-product-sale-price="{{ $product->sale_price ?? '' }}"
-     data-product-image="{{ $product->primary_image_url ?? asset('images/placeholder-product.png') }}"
-     data-product-description="{{ $product->description ?? $product->short_description ?? '' }}"
-     data-product-url="{{ route('products.show', ['slug' => $product->slug]) }}"
-     data-product-brand="{{ $product->brand?->name ?? '' }}">
+     data-product-image="{{ $image }}"
+     data-product-url="{{ $productUrl }}"
+     data-product-brand="{{ $product->brand->name ?? '' }}">
 
-  {{-- Creative Sale Ribbon --}}
-  @if($product->sale_price && $product->sale_price > 0 && $product->sale_price < $product->price)
-    @php
-      $discountPercent = round((($product->price - $product->sale_price) / $product->price) * 100);
-    @endphp
-    <div class="sale-ribbon {{ $discountPercent >= 50 ? 'style-2' : ($discountPercent >= 30 ? 'style-3' : '') }}">
-      <div class="ribbon-content">
-        <span class="ribbon-text">{{ $discountPercent }}%</span>
-        <span class="ribbon-off">OFF</span>
-      </div>
-      <div class="ribbon-tail"></div>
-      <div class="ribbon-sparkle"></div>
-    </div>
-  @endif
+  <a href="{{ $productUrl }}" class="av-product-card__media">
+    <img src="{{ $image }}"
+         alt="{{ $product->name }}"
+         width="400"
+         height="400"
+         loading="lazy"
+         decoding="async"
+         data-fallback="{{ asset('images/placeholder-product.png') }}"
+         class="av-product-card__image">
+    @if($hasSale)
+      <span class="av-product-card__badge">-{{ $discountPercent }}%</span>
+    @endif
+  </a>
 
-  {{-- Product Image --}}
-  <div class="product-image-wrapper">
-    <div class="product-image">
-      <img src="{{ $product->primary_image_url }}"
-           alt="{{ $product->name }}"
-           width="400"
-           height="400"
-           loading="lazy"
-           decoding="async"
-           data-fallback="{{ asset('images/placeholder-product.png') }}">
+  <button type="button"
+          class="av-product-card__wishlist wishlist-btn"
+          data-product-id="{{ $product->id }}"
+          aria-label="{{ __('common.messages.add_to_wishlist') }}"
+          aria-pressed="false"
+          title="{{ __('common.messages.add_to_wishlist') }}">
+    <i class="fas fa-heart" aria-hidden="true"></i>
+  </button>
 
-      @if($showActions)
-        <div class="image-overlay">
-          <div class="quick-actions">
-            <a href="{{ route('products.show', ['slug' => $product->slug]) }}"
-               class="quick-action-btn view-details-btn"
-               title="View Details">
-              <i class="fas fa-eye"></i>
-            </a>
-            <x-wishlist-button :product="$product" size="small" position="inline" :showText="false" />
-          </div>
-        </div>
-      @endif
-    </div>
-  </div>
-
-  {{-- Card Body --}}
-  <div class="card-body d-flex flex-column">
-    {{-- Brand --}}
-    @if($showBrand && $product->brand)
-      <div class="product-brand">{{ $product->brand->name }}</div>
+  <div class="av-product-card__body">
+    @if($product->brand)
+      <p class="av-product-card__eyebrow">{{ $product->brand->name }}</p>
     @endif
 
-    {{-- Product Name --}}
-    <h5 class="product-name">
-      <a href="{{ route('products.show', ['slug' => $product->slug]) }}"
-         class="text-decoration-none text-reset">
-        {{ $product->name }}
-      </a>
-    </h5>
+    <a href="{{ $productUrl }}" class="av-product-card__name">{{ $product->name }}</a>
 
-    {{-- Rating --}}
-    @if($showRating)
-      <div class="product-rating">
-        <div class="rating-stars">
-          @for($i = 1; $i <= 5; $i++)
-            <span class="star {{ $i <= 4 ? 'filled' : 'empty' }}">★</span>
-          @endfor
-        </div>
-        <span class="rating-text">(4.3)</span>
-      </div>
-    @endif
-
-    {{-- Enhanced Price Section --}}
-    <div class="price-section mt-auto">
-      @if($product->sale_price && $product->sale_price > 0 && $product->sale_price < $product->price)
-        <div class="price-row">
-          <span class="original-price">${{ number_format($product->price, 2) }}</span>
-          <span class="sale-price premium-price">${{ number_format($product->sale_price, 2) }}</span>
-        </div>
+    <p class="av-product-card__price">
+      @if($hasSale)
+        <span class="av-product-card__price--sale">${{ number_format($product->sale_price, 2) }}</span>
+        <span class="av-product-card__price--original">${{ number_format($product->price, 2) }}</span>
       @else
-        <div class="price-row">
-          <span class="current-price premium-price">${{ number_format($product->price, 2) }}</span>
-        </div>
+        <span class="av-product-card__price--current">${{ number_format($product->price, 2) }}</span>
       @endif
-    </div>
-
-    {{-- Action Buttons --}}
-    @if($showActions)
-      <div class="product-actions">
-        <a href="{{ route('products.show', ['slug' => $product->slug]) }}"
-           class="btn btn-primary btn-sm view-details-btn"
-           title="View Details">
-          <i class="fas fa-eye"></i>
-        </a>
-        <button type="button"
-                class="btn btn-outline-secondary btn-sm copy-link-btn"
-                data-product-url="{{ route('products.show', ['slug' => $product->slug]) }}"
-                title="Copy Link">
-          <i class="fas fa-copy"></i>
-        </button>
-        <x-wishlist-button :product="$product" size="small" position="inline" :showText="false" />
-      </div>
-    @endif
+    </p>
   </div>
 </div>

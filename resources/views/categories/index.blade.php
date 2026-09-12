@@ -156,12 +156,12 @@
 
         <div class="category-stats">
           <span>
-            <span>📦</span>
+            <span aria-hidden="true">📦</span>
             {{ $category->products_count ?? 0 }} products
           </span>
           @if($category->children_count > 0)
             <span>
-              <span>📂</span>
+              <span aria-hidden="true">📂</span>
               {{ $category->children_count }} subcategories
             </span>
           @endif

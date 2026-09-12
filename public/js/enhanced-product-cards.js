@@ -92,9 +92,11 @@
                 const productId = btn.dataset.productId;
                 if (this.isInWishlist(productId)) {
                     btn.classList.add('in-wishlist');
+                    btn.setAttribute('aria-pressed', 'true');
                     btn.title = 'Remove from Wishlist';
                 } else {
                     btn.classList.remove('in-wishlist');
+                    btn.setAttribute('aria-pressed', 'false');
                     btn.title = 'Add to Wishlist';
                 }
             });
@@ -369,7 +371,7 @@
 
         toggleWishlist(button) {
             const productId = button.dataset.productId;
-            const productCard = button.closest('.product-card');
+            const productCard = button.closest('[data-product-id]');
 
             if (!productCard) return;
 
