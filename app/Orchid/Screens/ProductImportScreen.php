@@ -42,8 +42,8 @@ class ProductImportScreen extends Screen
             Layout::rows([
                 Input::make('csv')->type('file')->accept('.csv,text/csv')->required()->title('CSV file'),
                 Button::make('Preview')->icon('bs.eye')->method('preview'),
-                Button::make('Download CSV Template')->icon('bs.download')->method('downloadTemplate'),
-                Button::make('Download ChatGPT Prompt')->icon('bs.download')->method('downloadChatGptPrompt'),
+                Button::make('Download CSV Template')->icon('bs.download')->method('downloadTemplate')->download(),
+                Button::make('Download ChatGPT Prompt')->icon('bs.download')->method('downloadChatGptPrompt')->download(),
                 Button::make('Confirm Import')->icon('bs.check-circle')->method('confirmImport')
                     ->confirm('Create all eligible products? Existing products will be skipped.')
                     ->canSee((bool) session('product_import_can_confirm')),
