@@ -7,7 +7,6 @@ use App\Support\SeoData;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Tests\TestCase;
 
 class TechnicalSeoTest extends TestCase
@@ -90,7 +89,7 @@ class TechnicalSeoTest extends TestCase
     public function test_localized_search_remains_noindex_and_api_is_not_locale_redirected(): void
     {
         $this->mock(EnhancedPerformanceService::class, function ($mock): void {
-            $mock->shouldReceive('getCachedProducts')->once()->andReturn(['data' => new LengthAwarePaginator([], 0, 12), 'pagination' => ['total' => 0, 'current_page' => 1, 'last_page' => 1]]);
+            $mock->shouldReceive('getCachedProducts')->once()->andReturn(['data' => [], 'pagination' => ['total' => 0, 'current_page' => 1, 'last_page' => 1]]);
             $mock->shouldReceive('getCachedSearchSuggestions')->once()->andReturn([]);
             $mock->shouldReceive('getCachedNavigation')->once()->andReturn(['brands' => [], 'categories' => []]);
         });
