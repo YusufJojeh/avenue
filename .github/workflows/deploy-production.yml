@@ -99,6 +99,7 @@ jobs:
       - name: Configure SSH
         env:
           SSH_KEY: ${{ secrets.CPANEL_SSH_KEY }}
+          SSH_KEY_PASSPHRASE: ${{ secrets.CPANEL_SSH_KEY_PASSPHRASE }}
         run: |
           set -Eeuo pipefail
           mkdir -p ~/.ssh
@@ -119,6 +120,18 @@ jobs:
           printf '\n' >> ~/.ssh/deploy_key
           rm -f ~/.ssh/deploy_key.raw
           chmod 600 ~/.ssh/deploy_key
+
+          # If CPANEL_SSH_KEY is passphrase-protected, strip the passphrase
+          # now so every later `ssh -i ~/.ssh/deploy_key` call (which relies
+          # on BatchMode=yes and cannot prompt) can use it directly. The
+          # decrypted key only ever exists on this ephemeral runner.
+          if [ -n "$SSH_KEY_PASSPHRASE" ]; then
+            if ! ssh-keygen -p -P "$SSH_KEY_PASSPHRASE" -N "" -f ~/.ssh/deploy_key > /tmp/keygen_strip.txt 2>&1; then
+              echo "::error::CPANEL_SSH_KEY_PASSPHRASE did not unlock CPANEL_SSH_KEY — see error below"
+              cat /tmp/keygen_strip.txt
+              exit 1
+            fi
+          fi
 
           if ! ssh-keygen -y -f ~/.ssh/deploy_key -P "" > /dev/null 2>/tmp/keygen_err.txt; then
             echo "::error::CPANEL_SSH_KEY could not be parsed as a valid private key — see error below"
