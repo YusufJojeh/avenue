@@ -166,15 +166,22 @@ jobs:
       - name: Sync application code to DEPLOY_PATH
         run: |
           set -Eeuo pipefail
+          # Every exclude below is root-anchored (leading /) so it only matches
+          # at the top of the transfer tree. An earlier unanchored 'vendor/'
+          # pattern also matched public/vendor/orchid/ at any depth, silently
+          # stripping Orchid's admin assets out of every deploy — that's what
+          # caused the "Mix manifest not found" production error. Composer
+          # deps are still excluded (the server runs its own composer install
+          # below); public/vendor/orchid/ is application-owned and must ship.
           rsync -az --omit-dir-times \
             -e "ssh -i ~/.ssh/deploy_key -p $CPANEL_PORT_S -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes" \
-            --exclude='.git/' \
-            --exclude='.github/' \
-            --exclude='.claude/' \
-            --exclude='node_modules/' \
-            --exclude='vendor/' \
-            --exclude='storage/' \
-            --exclude='tests/' \
+            --exclude='/.git/' \
+            --exclude='/.github/' \
+            --exclude='/.claude/' \
+            --exclude='/node_modules/' \
+            --exclude='/vendor/' \
+            --exclude='/storage/' \
+            --exclude='/tests/' \
             --exclude='.env' \
             --exclude='.env.*' \
             --exclude='.phpunit.result.cache' \
@@ -203,6 +210,13 @@ jobs:
 
           echo "==> composer install (no-dev, production)"
           composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader
+
+          echo "==> publishing Orchid admin assets"
+          php artisan orchid:publish
+          if [ ! -f "public/vendor/orchid/mix-manifest.json" ]; then
+            echo "::error::public/vendor/orchid/mix-manifest.json missing after orchid:publish"
+            exit 1
+          fi
 
           echo "==> maintenance mode on"
           php artisan down || true
@@ -263,8 +277,16 @@ jobs:
           mkdir -p "$PUBLIC_HTML/build"
           rsync -a --delete "$APP_PUBLIC/build/" "$PUBLIC_HTML/build/"
 
+          echo "==> vendor/orchid/ (published by orchid:publish — safe to mirror exactly)"
+          if [ ! -f "$APP_PUBLIC/vendor/orchid/mix-manifest.json" ]; then
+            echo "::error::public/vendor/orchid/mix-manifest.json missing on server — refusing to sync a broken Orchid asset set"
+            exit 1
+          fi
+          mkdir -p "$PUBLIC_HTML/vendor/orchid"
+          rsync -a --delete "$APP_PUBLIC/vendor/orchid/" "$PUBLIC_HTML/vendor/orchid/"
+
           echo "==> allowlisted app-owned static directories (additive only, no deletion)"
-          for dir in brand css js images vendor; do
+          for dir in brand css js images; do
             if [ -d "$APP_PUBLIC/$dir" ]; then
               mkdir -p "$PUBLIC_HTML/$dir"
               rsync -a "$APP_PUBLIC/$dir/" "$PUBLIC_HTML/$dir/"
@@ -283,14 +305,38 @@ jobs:
           REMOTE_SCRIPT
 
       # ---------------------------------------------------------------
+      # Post-deploy verification: storage symlink must be exactly right
+      # ---------------------------------------------------------------
+      - name: Verify storage symlink target
+        run: |
+          set -Eeuo pipefail
+          ssh -i ~/.ssh/deploy_key -p "$CPANEL_PORT_S" \
+              -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes \
+              "$CPANEL_USER_S@$CPANEL_HOST_S" bash -s -- "$DEPLOY_PATH_S" <<'REMOTE_SCRIPT'
+          set -Eeuo pipefail
+          DEPLOY_PATH="$1"
+          PUBLIC_HTML="/home/$(whoami)/public_html"
+          EXPECTED="$DEPLOY_PATH/storage/app/public"
+          ACTUAL="$(readlink "$PUBLIC_HTML/storage" || true)"
+          if [ "$ACTUAL" != "$EXPECTED" ]; then
+            echo "::error::storage symlink is wrong: expected '$EXPECTED', found '$ACTUAL'"
+            exit 1
+          fi
+          echo "storage symlink OK -> $ACTUAL"
+          REMOTE_SCRIPT
+
+      # ---------------------------------------------------------------
       # Health check
       # ---------------------------------------------------------------
       - name: Health check production site
         run: |
           set -Eeuo pipefail
-          curl --fail --show-error --location \
-               --retry 3 --retry-delay 5 --max-time 30 \
-               https://avenuebrand.online/
+          for path in / /en /admin/login; do
+            echo "==> checking https://avenuebrand.online${path}"
+            curl --fail --show-error --location \
+                 --retry 3 --retry-delay 5 --max-time 30 \
+                 "https://avenuebrand.online${path}" -o /dev/null
+          done
 
       - name: Deployment summary
         run: |

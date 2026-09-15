@@ -98,6 +98,25 @@ class ProductCsvPreviewServiceTest extends TestCase
         $this->preview("name_ar,name_en,category,price\n".implode("\n", $rows));
     }
 
+    public function test_missing_required_column_is_rejected(): void
+    {
+        $this->expectException(ValidationException::class);
+        $this->preview("name_ar,name_en,category\nمنتج,Product,Men\n");
+    }
+
+    public function test_unsupported_column_is_rejected(): void
+    {
+        $this->expectException(ValidationException::class);
+        $this->preview("name_ar,name_en,category,price,not_a_real_column\nمنتج,Product,Men,10,x\n");
+    }
+
+    public function test_spreadsheet_formula_prefixed_value_is_invalid(): void
+    {
+        $preview = $this->preview("name_ar,name_en,category,price\n=cmd|'/c calc'!A1,Product,Men,10\n");
+        $this->assertSame('INVALID', $preview['rows'][0]['status']);
+        $this->assertStringContainsString('spreadsheet formula', implode(' ', $preview['rows'][0]['messages']));
+    }
+
     public function test_generated_template_is_utf8_and_cannot_drift_from_parser_contract(): void
     {
         $csv = ProductCsvContract::template();

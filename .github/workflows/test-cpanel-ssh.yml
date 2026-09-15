@@ -140,6 +140,10 @@ jobs:
           ssh_run "cd '$DEPLOY_PATH' && { test -f .env && echo '.env: present' || echo '.env: MISSING'; }"
           ssh_run "cd '$DEPLOY_PATH' && { test -f env && echo 'legacy env file: present (needs manual review, do not auto-rename)' || echo 'legacy env file: none found'; }"
 
+          echo "### application checkout sanity"
+          ssh_run "test -f '$DEPLOY_PATH/artisan' && echo 'artisan: present' || echo 'artisan: MISSING'"
+          ssh_run "test -f '$DEPLOY_PATH/vendor/autoload.php' && echo 'vendor/autoload.php: present' || echo 'vendor/autoload.php: MISSING (expected before the first composer install)'"
+
           echo "### production index.php wiring (structure only, no secrets in this file)"
           ssh_run "test -f '$PUBLIC_HTML/index.php' && echo 'public_html/index.php: present' || echo 'public_html/index.php: MISSING'"
           ssh_run "grep -o \"repositories/avenue[^'\\\"]*\" '$PUBLIC_HTML/index.php' 2>/dev/null | sort -u || echo 'no repositories/avenue path reference found (review manually)'"

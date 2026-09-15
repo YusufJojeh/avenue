@@ -86,17 +86,25 @@ succeeded):
 3. `npm ci` + `npm run build` (Vite), and verify `public/build/manifest.json`
    exists.
 4. SSH key setup with strict host key checking (`ssh-keyscan` populates
-   `known_hosts` — `StrictHostHostKeyChecking=no` is never used).
+   `known_hosts` — `StrictHostHostKeyChecking=no` is never used), including a
+   local `ssh-keygen -y` parse check so a bad key secret fails fast with a
+   clear error instead of a confusing downstream auth failure.
 5. Pre-flight `.env` check (see below) — deploy stops here if it's wrong.
-6. `rsync` the application code to `DEPLOY_PATH`, excluding `.git/`,
-   `.github/`, `node_modules/`, `vendor/`, `storage/`, `tests/`, and any
-   `.env*` file. No `--delete` is used for this sync — it's additive only,
-   so nothing on the server is ever removed by this step.
+6. `rsync` the application code to `DEPLOY_PATH`, excluding `/.git/`,
+   `/.github/`, `/node_modules/`, `/vendor/`, `/storage/`, `/tests/`, and any
+   `.env*` file. Every exclude is root-anchored (leading `/`) so it only
+   matches at the top of the transfer tree — an earlier unanchored `vendor/`
+   pattern also matched `public/vendor/orchid/` at any depth, which is what
+   caused a historical "Mix manifest not found" error in production. No
+   `--delete` is used for this sync — it's additive only, so nothing on the
+   server is ever removed by this step.
 7. On the server: `composer install --no-dev --optimize-autoloader`
-   (never `composer update`), wrapped in `php artisan down` /
-   `php artisan up` maintenance mode (a `trap` guarantees `up` runs even if
-   a step in between fails), `php artisan migrate --force`, then
-   `optimize:clear` + `config:cache` + `view:cache`.
+   (never `composer update`), then `php artisan orchid:publish` with a
+   `public/vendor/orchid/mix-manifest.json` existence check (fails the
+   deploy if missing), wrapped in `php artisan down` / `php artisan up`
+   maintenance mode (a `trap` guarantees `up` runs even if a step in between
+   fails), `php artisan migrate --force`, then `optimize:clear` +
+   `config:cache` + `view:cache`.
 8. Storage/bootstrap-cache permissions set narrowly (`chmod 775`/`664` on
    just those two directories — never `777`, never recursive elsewhere).
 9. `public_html/storage` symlink created only if missing — an existing
@@ -104,7 +112,11 @@ succeeded):
 10. The deployed commit SHA is written to
     `DEPLOY_PATH/.deployed_commit` for rollback reference.
 11. Public asset sync — see allowlist below.
-12. `curl --fail` against `https://avenuebrand.online/`.
+12. Storage symlink target is verified against the exact expected path
+    (`DEPLOY_PATH/storage/app/public`) — the deploy fails if it's ever wrong.
+13. `curl --fail` against `/`, `/en`, and `/admin/login` on
+    `https://avenuebrand.online` (login page only — no admin credentials are
+    used in CI).
 
 ### Why `route:cache` is not run
 
@@ -123,9 +135,16 @@ Verify manually (`php artisan route:cache` on the server, check for errors,
 - `public/build/` → `public_html/build/` with `rsync -a --delete`, because
   this directory is entirely Vite-generated — nothing hand-placed ever lives
   there, so mirroring it exactly (including deletions) is safe.
-- `brand/`, `css/`, `js/`, `images/`, `vendor/` → additive `rsync -a` (no
-  `--delete`) into the matching `public_html` directory. These are
-  application-owned but the sync is deliberately conservative.
+- `public/vendor/orchid/` → `public_html/vendor/orchid/` with
+  `rsync -a --delete`, scoped to this one directory only. It's entirely
+  produced by `php artisan orchid:publish` from the installed Orchid
+  package version, so mirroring it exactly (including deletions of assets
+  from a previous Orchid version) is safe. The deploy refuses to run this
+  sync if `mix-manifest.json` is missing on the server, rather than
+  publishing a broken asset set.
+- `brand/`, `css/`, `js/`, `images/` → additive `rsync -a` (no `--delete`)
+  into the matching `public_html` directory. These are application-owned
+  but the sync is deliberately conservative.
 - `favicon.ico`, `robots.txt` → copied individually.
 - Everything else already in `public_html` — `.htaccess`,
   `.well-known/`, and any other file not in the list above — is never

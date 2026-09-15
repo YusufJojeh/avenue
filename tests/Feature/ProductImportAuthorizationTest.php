@@ -97,6 +97,20 @@ class ProductImportAuthorizationTest extends TestCase
         $this->assertDatabaseCount('products', 0);
     }
 
+    public function test_non_csv_extension_is_rejected_at_upload(): void
+    {
+        $user = User::create([
+            'name' => 'Catalog Admin', 'email' => 'catalog-ext@example.test',
+            'password' => bcrypt('password'), 'permissions' => ['platform.index' => true],
+        ]);
+        $file = UploadedFile::fake()->createWithContent('products.txt', "name_ar,name_en,category,price\nمنتج,Product,Men,10\n");
+
+        $this->actingAs($user)
+            ->post(route('platform.products.import', ['method' => 'preview']), ['csv' => $file])
+            ->assertSessionHasErrors('csv');
+        $this->assertDatabaseCount('products', 0);
+    }
+
     public function test_chatgpt_prompt_download_requires_permission_and_uses_canonical_headers(): void
     {
         $route = route('platform.products.import', ['method' => 'downloadChatGptPrompt']);
