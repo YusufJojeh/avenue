@@ -64,6 +64,13 @@ jobs:
             *) echo "::warning::last non-blank line does not look like a PEM footer (length: ${#LAST_LINE} chars — not printed)";;
           esac
 
+          # Presence-only marker check (grep -c only counts matching lines,
+          # never prints their content) to tell apart "markers present but
+          # something else is wrong" from "markers missing entirely".
+          BEGIN_COUNT=$(grep -c '^-----BEGIN.*-----$' ~/.ssh/deploy_key || true)
+          END_COUNT=$(grep -c '^-----END.*-----$' ~/.ssh/deploy_key || true)
+          echo "PEM marker check: $BEGIN_COUNT BEGIN line(s), $END_COUNT END line(s) found (expect exactly 1 each)"
+
           if ssh-keygen -y -f ~/.ssh/deploy_key -P "" > /tmp/derived_pub.txt 2>/tmp/keygen_err.txt; then
             echo "ssh-keygen derived this public key from CPANEL_SSH_KEY (public keys are not secret):"
             cat /tmp/derived_pub.txt
@@ -71,6 +78,9 @@ jobs:
           else
             echo "::error::ssh-keygen could not parse CPANEL_SSH_KEY as a valid private key — see error below"
             cat /tmp/keygen_err.txt
+            if [ "$BEGIN_COUNT" -eq 0 ] || [ "$END_COUNT" -eq 0 ]; then
+              echo "::error::CPANEL_SSH_KEY is missing its -----BEGIN-----/-----END----- marker line(s). The secret likely has only the base64 body pasted in, not the full key file. It must be reset with the complete, unmodified private key file contents (including both marker lines)."
+            fi
             exit 1
           fi
 
