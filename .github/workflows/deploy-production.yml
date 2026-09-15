@@ -134,13 +134,26 @@ jobs:
             exit 1
           fi
 
+          # Establish one multiplexed connection for the whole job instead of
+          # a fresh TCP+SSH handshake per later step. Some cPanel hosts run
+          # connection-rate protection (cPHulk/CSF) that can flag a burst of
+          # brand-new connections from one IP even when each authenticates
+          # correctly. ControlPersist keeps this alive in the background for
+          # the rest of the job; the runner VM is destroyed afterwards, so no
+          # explicit teardown is needed.
+          echo "SSH_CONTROL_PATH=$HOME/.ssh/cm_socket" >> "$GITHUB_ENV"
+          ssh -i ~/.ssh/deploy_key -p "$CPANEL_PORT_S" \
+              -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes \
+              -o ControlMaster=yes -o ControlPersist=15m -o ControlPath="$HOME/.ssh/cm_socket" \
+              -fN "$CPANEL_USER_S@$CPANEL_HOST_S"
+
       # ---------------------------------------------------------------
       # Pre-flight: refuse to deploy onto a broken .env setup
       # ---------------------------------------------------------------
       - name: Verify production .env is sane (existence only, never read contents)
         run: |
           set -Eeuo pipefail
-          SSH="ssh -i ~/.ssh/deploy_key -p $CPANEL_PORT_S -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes $CPANEL_USER_S@$CPANEL_HOST_S"
+          SSH="ssh -i ~/.ssh/deploy_key -p $CPANEL_PORT_S -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes -o ControlPath=$SSH_CONTROL_PATH $CPANEL_USER_S@$CPANEL_HOST_S"
 
           HAS_DOTENV=$($SSH "cd '$DEPLOY_PATH_S' && test -f .env && echo yes || echo no")
           HAS_LEGACY_ENV=$($SSH "cd '$DEPLOY_PATH_S' && test -f env && echo yes || echo no")
@@ -174,7 +187,7 @@ jobs:
           # deps are still excluded (the server runs its own composer install
           # below); public/vendor/orchid/ is application-owned and must ship.
           rsync -az --omit-dir-times \
-            -e "ssh -i ~/.ssh/deploy_key -p $CPANEL_PORT_S -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes" \
+            -e "ssh -i ~/.ssh/deploy_key -p $CPANEL_PORT_S -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes -o ControlPath=$SSH_CONTROL_PATH" \
             --exclude='/.git/' \
             --exclude='/.github/' \
             --exclude='/.claude/' \
@@ -194,7 +207,7 @@ jobs:
         run: |
           set -Eeuo pipefail
           ssh -i ~/.ssh/deploy_key -p "$CPANEL_PORT_S" \
-              -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes \
+              -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes -o ControlPath="$SSH_CONTROL_PATH" \
               "$CPANEL_USER_S@$CPANEL_HOST_S" bash -s -- "$DEPLOY_PATH_S" <<'REMOTE_SCRIPT'
           set -Eeuo pipefail
           DEPLOY_PATH="$1"
@@ -255,7 +268,7 @@ jobs:
         run: |
           set -Eeuo pipefail
           ssh -i ~/.ssh/deploy_key -p "$CPANEL_PORT_S" \
-              -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes \
+              -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes -o ControlPath="$SSH_CONTROL_PATH" \
               "$CPANEL_USER_S@$CPANEL_HOST_S" \
               "echo '$GITHUB_SHA' > '$DEPLOY_PATH_S/.deployed_commit'"
 
@@ -266,7 +279,7 @@ jobs:
         run: |
           set -Eeuo pipefail
           ssh -i ~/.ssh/deploy_key -p "$CPANEL_PORT_S" \
-              -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes \
+              -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes -o ControlPath="$SSH_CONTROL_PATH" \
               "$CPANEL_USER_S@$CPANEL_HOST_S" bash -s -- "$DEPLOY_PATH_S" <<'REMOTE_SCRIPT'
           set -Eeuo pipefail
           DEPLOY_PATH="$1"
@@ -311,7 +324,7 @@ jobs:
         run: |
           set -Eeuo pipefail
           ssh -i ~/.ssh/deploy_key -p "$CPANEL_PORT_S" \
-              -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes \
+              -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes -o ControlPath="$SSH_CONTROL_PATH" \
               "$CPANEL_USER_S@$CPANEL_HOST_S" bash -s -- "$DEPLOY_PATH_S" <<'REMOTE_SCRIPT'
           set -Eeuo pipefail
           DEPLOY_PATH="$1"

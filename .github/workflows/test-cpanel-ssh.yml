@@ -106,10 +106,24 @@ jobs:
           SSH_USER="$(sanitize "$SSH_USER")"
           DEPLOY_PATH="$(sanitize "$DEPLOY_PATH")"
 
+          # Reuse one authenticated connection for every check below instead
+          # of opening a fresh TCP+SSH handshake per command. Several cPanel
+          # hosts run connection-rate protection (cPHulk/CSF) that treats a
+          # burst of brand-new SSH connections from one IP as suspicious even
+          # when every one authenticates correctly — multiplexing avoids
+          # tripping that entirely, and is faster besides.
+          mkdir -p ~/.ssh/control
+          CONTROL_PATH=~/.ssh/control/%r@%h:%p
+          cleanup_control() {
+            ssh -o ControlPath="$CONTROL_PATH" -O exit "$SSH_USER@$SSH_HOST" 2>/dev/null || true
+          }
+          trap cleanup_control EXIT
+
           ssh_run() {
             ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" \
                 -o UserKnownHostsFile=~/.ssh/known_hosts \
                 -o BatchMode=yes \
+                -o ControlMaster=auto -o ControlPersist=60s -o ControlPath="$CONTROL_PATH" \
                 "$SSH_USER@$SSH_HOST" "$1"
           }
 
