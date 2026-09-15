@@ -3,7 +3,7 @@
 ## Architecture
 
 ```
-push/merge to main
+push/merge to master
         |
 GitHub Actions (.github/workflows/deploy-production.yml)
         |
@@ -23,7 +23,7 @@ health check -> https://avenuebrand.online
 GitHub Actions owns the deployed commit. The server never runs `git pull` —
 it only receives what the workflow rsyncs to it, which is always the exact
 commit that triggered the run. This keeps "what's live" deterministic and
-avoids the server independently deciding what `origin/main` currently is.
+avoids the server independently deciding what `origin/master` currently is.
 
 Two separate directories exist on the server for a reason:
 
@@ -70,7 +70,8 @@ gh run watch
 
 ### `.github/workflows/deploy-production.yml`
 
-Triggers on push to `main` and manually via `workflow_dispatch`. Runs with
+Triggers on push to `master` (this repo's actual default branch — not `main`)
+and manually via `workflow_dispatch`. Runs with
 `concurrency: { group: avenue-production, cancel-in-progress: false }` so two
 deploys can never race, and `permissions: contents: read` (no broader token
 scope than needed).
