@@ -1,0 +1,284 @@
+name: Deploy to Production
+
+# GitHub Actions is the source of truth for what gets deployed: it checks out
+# the exact commit that triggered the run, tests it, builds it, and pushes
+# that artifact to cPanel over SSH/rsync. The server never pulls from git
+# itself — this keeps deploys deterministic.
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: {}
+
+concurrency:
+  group: avenue-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  PHP_VERSION: '8.2'
+  NODE_VERSION: '20'
+
+jobs:
+  deploy:
+    name: Test, build, and deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      # ---------------------------------------------------------------
+      # Pre-flight: PHP tests
+      # ---------------------------------------------------------------
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mbstring, dom, fileinfo, gd, bcmath, zip, pdo_mysql, pdo_sqlite
+          coverage: none
+
+      - name: Validate composer.json/composer.lock
+        run: composer validate --strict --no-check-publish
+
+      - name: Install PHP dependencies (incl. dev, for the test suite)
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Prepare testing environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate --ansi
+
+      - name: Run PHP test suite
+        run: php artisan test
+
+      # ---------------------------------------------------------------
+      # Pre-flight: frontend build (Vite)
+      # ---------------------------------------------------------------
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Build frontend assets
+        run: npm run build
+
+      - name: Verify build output exists
+        run: test -f public/build/manifest.json
+
+      # ---------------------------------------------------------------
+      # SSH setup
+      # ---------------------------------------------------------------
+      - name: Configure SSH
+        env:
+          SSH_KEY: ${{ secrets.CPANEL_SSH_KEY }}
+          SSH_HOST: ${{ secrets.CPANEL_HOST }}
+          SSH_PORT: ${{ secrets.CPANEL_PORT }}
+        run: |
+          set -Eeuo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          touch ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+          ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          if [ ! -s ~/.ssh/known_hosts ]; then
+            echo "::error::ssh-keyscan returned nothing — aborting before touching production"
+            exit 1
+          fi
+
+      # ---------------------------------------------------------------
+      # Pre-flight: refuse to deploy onto a broken .env setup
+      # ---------------------------------------------------------------
+      - name: Verify production .env is sane (existence only, never read contents)
+        env:
+          SSH_HOST: ${{ secrets.CPANEL_HOST }}
+          SSH_PORT: ${{ secrets.CPANEL_PORT }}
+          SSH_USER: ${{ secrets.CPANEL_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          set -Eeuo pipefail
+          SSH="ssh -i ~/.ssh/deploy_key -p $SSH_PORT -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes $SSH_USER@$SSH_HOST"
+
+          HAS_DOTENV=$($SSH "cd '$DEPLOY_PATH' && test -f .env && echo yes || echo no")
+          HAS_LEGACY_ENV=$($SSH "cd '$DEPLOY_PATH' && test -f env && echo yes || echo no")
+
+          if [ "$HAS_DOTENV" = "no" ] && [ "$HAS_LEGACY_ENV" = "yes" ]; then
+            echo "::error::Production .env configuration requires correction."
+            echo "A file literally named 'env' exists at $DEPLOY_PATH but '.env' does not."
+            echo "This will NOT be auto-renamed. Fix it manually on the server, then re-run."
+            exit 1
+          fi
+
+          if [ "$HAS_DOTENV" = "no" ]; then
+            echo "::error::Production .env configuration requires correction."
+            echo "No .env file found at $DEPLOY_PATH — Laravel cannot boot without it. Refusing to deploy."
+            exit 1
+          fi
+
+          echo ".env present on server — continuing."
+
+      # ---------------------------------------------------------------
+      # Ship the exact checked-out commit to the application directory
+      # ---------------------------------------------------------------
+      - name: Sync application code to DEPLOY_PATH
+        env:
+          SSH_HOST: ${{ secrets.CPANEL_HOST }}
+          SSH_PORT: ${{ secrets.CPANEL_PORT }}
+          SSH_USER: ${{ secrets.CPANEL_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          set -Eeuo pipefail
+          rsync -az --omit-dir-times \
+            -e "ssh -i ~/.ssh/deploy_key -p $SSH_PORT -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes" \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='.claude/' \
+            --exclude='node_modules/' \
+            --exclude='vendor/' \
+            --exclude='storage/' \
+            --exclude='tests/' \
+            --exclude='.env' \
+            --exclude='.env.*' \
+            --exclude='.phpunit.result.cache' \
+            ./ "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/"
+
+      # ---------------------------------------------------------------
+      # Server-side: dependencies, migrations, cache (maintenance-mode wrapped)
+      # ---------------------------------------------------------------
+      - name: Install server-side Composer dependencies, migrate, and cache
+        env:
+          SSH_HOST: ${{ secrets.CPANEL_HOST }}
+          SSH_PORT: ${{ secrets.CPANEL_PORT }}
+          SSH_USER: ${{ secrets.CPANEL_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          set -Eeuo pipefail
+          ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" \
+              -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes \
+              "$SSH_USER@$SSH_HOST" bash -s -- "$DEPLOY_PATH" <<'REMOTE_SCRIPT'
+          set -Eeuo pipefail
+          DEPLOY_PATH="$1"
+          cd "$DEPLOY_PATH"
+
+          APP_DOWN=0
+          cleanup() {
+            if [ "$APP_DOWN" = "1" ]; then
+              php artisan up || true
+            fi
+          }
+          trap cleanup EXIT
+
+          echo "==> composer install (no-dev, production)"
+          composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader
+
+          echo "==> maintenance mode on"
+          php artisan down || true
+          APP_DOWN=1
+
+          echo "==> database migrations"
+          php artisan migrate --force
+
+          echo "==> cache optimization"
+          php artisan optimize:clear
+          php artisan config:cache
+          php artisan view:cache
+          # route:cache intentionally NOT run here: Orchid's dynamic platform
+          # screens/menus have not yet been verified compatible with cached
+          # routes. Enable deliberately (see docs/deployment.md) once verified.
+
+          echo "==> storage/bootstrap-cache permissions (least privilege, no 777)"
+          find storage bootstrap/cache -type d -exec chmod 775 {} \;
+          find storage bootstrap/cache -type f -exec chmod 664 {} \;
+
+          echo "==> storage symlink (idempotent, never overwrites an existing one)"
+          PUBLIC_HTML="/home/$(whoami)/public_html"
+          if [ ! -e "$PUBLIC_HTML/storage" ]; then
+            ln -s "$DEPLOY_PATH/storage/app/public" "$PUBLIC_HTML/storage"
+            echo "storage symlink created"
+          else
+            echo "storage symlink/dir already present — left untouched"
+          fi
+
+          echo "==> maintenance mode off"
+          php artisan up
+          APP_DOWN=0
+          REMOTE_SCRIPT
+
+      - name: Record deployed commit
+        env:
+          SSH_HOST: ${{ secrets.CPANEL_HOST }}
+          SSH_PORT: ${{ secrets.CPANEL_PORT }}
+          SSH_USER: ${{ secrets.CPANEL_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          set -Eeuo pipefail
+          ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" \
+              -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes \
+              "$SSH_USER@$SSH_HOST" \
+              "echo '$GITHUB_SHA' > '$DEPLOY_PATH/.deployed_commit'"
+
+      # ---------------------------------------------------------------
+      # Public web root: allowlisted, non-destructive static asset sync
+      # ---------------------------------------------------------------
+      - name: Sync public assets into public_html (allowlist only)
+        env:
+          SSH_HOST: ${{ secrets.CPANEL_HOST }}
+          SSH_PORT: ${{ secrets.CPANEL_PORT }}
+          SSH_USER: ${{ secrets.CPANEL_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          set -Eeuo pipefail
+          ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" \
+              -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes \
+              "$SSH_USER@$SSH_HOST" bash -s -- "$DEPLOY_PATH" <<'REMOTE_SCRIPT'
+          set -Eeuo pipefail
+          DEPLOY_PATH="$1"
+          PUBLIC_HTML="/home/$(whoami)/public_html"
+          APP_PUBLIC="$DEPLOY_PATH/public"
+
+          echo "==> build/ (fully Vite-generated — safe to mirror exactly)"
+          mkdir -p "$PUBLIC_HTML/build"
+          rsync -a --delete "$APP_PUBLIC/build/" "$PUBLIC_HTML/build/"
+
+          echo "==> allowlisted app-owned static directories (additive only, no deletion)"
+          for dir in brand css js images vendor; do
+            if [ -d "$APP_PUBLIC/$dir" ]; then
+              mkdir -p "$PUBLIC_HTML/$dir"
+              rsync -a "$APP_PUBLIC/$dir/" "$PUBLIC_HTML/$dir/"
+            fi
+          done
+
+          echo "==> allowlisted app-owned static files"
+          for f in favicon.ico robots.txt; do
+            if [ -f "$APP_PUBLIC/$f" ]; then
+              cp "$APP_PUBLIC/$f" "$PUBLIC_HTML/$f"
+            fi
+          done
+
+          echo "Public asset sync complete. .htaccess, .well-known/, and anything"
+          echo "else in public_html not listed above was intentionally left untouched."
+          REMOTE_SCRIPT
+
+      # ---------------------------------------------------------------
+      # Health check
+      # ---------------------------------------------------------------
+      - name: Health check production site
+        run: |
+          set -Eeuo pipefail
+          curl --fail --show-error --location \
+               --retry 3 --retry-delay 5 --max-time 30 \
+               https://avenuebrand.online/
+
+      - name: Deployment summary
+        run: |
+          echo "Deployment successful"
+          echo "deployment commit: $GITHUB_SHA"

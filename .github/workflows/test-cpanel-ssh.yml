@@ -1,0 +1,97 @@
+name: cPanel SSH Smoke Test
+
+# Manual only. This never touches application code or the database — it just
+# proves the GitHub -> cPanel SSH path works before deploy-production.yml is
+# trusted with a real deploy.
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  smoke-test:
+    name: Verify SSH access to cPanel
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure SSH
+        env:
+          SSH_KEY: ${{ secrets.CPANEL_SSH_KEY }}
+          SSH_HOST: ${{ secrets.CPANEL_HOST }}
+          SSH_PORT: ${{ secrets.CPANEL_PORT }}
+        run: |
+          set -Eeuo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          touch ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+          ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          if [ ! -s ~/.ssh/known_hosts ]; then
+            echo "::error::ssh-keyscan returned nothing — host/port unreachable or wrong"
+            exit 1
+          fi
+
+      - name: Run remote smoke checks
+        env:
+          SSH_HOST: ${{ secrets.CPANEL_HOST }}
+          SSH_PORT: ${{ secrets.CPANEL_PORT }}
+          SSH_USER: ${{ secrets.CPANEL_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          set -Eeuo pipefail
+
+          ssh_run() {
+            ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" \
+                -o UserKnownHostsFile=~/.ssh/known_hosts \
+                -o BatchMode=yes \
+                "$SSH_USER@$SSH_HOST" "$1"
+          }
+
+          PUBLIC_HTML="/home/$SSH_USER/public_html"
+
+          echo "### whoami / user identity"
+          REMOTE_USER=$(ssh_run "whoami")
+          echo "SSH OK — connected as: $REMOTE_USER"
+          echo "USER OK"
+
+          echo "### DEPLOY_PATH existence"
+          ssh_run "test -d '$DEPLOY_PATH'" \
+            && echo "DEPLOY_PATH OK ($DEPLOY_PATH exists)" \
+            || { echo "::error::DEPLOY_PATH does not exist on server: $DEPLOY_PATH"; exit 1; }
+
+          echo "### PHP"
+          ssh_run "php -v" && echo "PHP OK"
+
+          echo "### Composer"
+          ssh_run "composer --version" && echo "COMPOSER OK"
+
+          echo "### rsync"
+          ssh_run "rsync --version | head -1" && echo "RSYNC OK"
+
+          echo "### Node (informational only — build happens in GitHub Actions, not required remotely)"
+          ssh_run "command -v node >/dev/null 2>&1 && node -v || echo 'node not present on server (fine, not required)'"
+
+          echo "### .env vs legacy 'env' file (existence only, contents never read)"
+          ssh_run "cd '$DEPLOY_PATH' && { test -f .env && echo '.env: present' || echo '.env: MISSING'; }"
+          ssh_run "cd '$DEPLOY_PATH' && { test -f env && echo 'legacy env file: present (needs manual review, do not auto-rename)' || echo 'legacy env file: none found'; }"
+
+          echo "### production index.php wiring (structure only, no secrets in this file)"
+          ssh_run "test -f '$PUBLIC_HTML/index.php' && echo 'public_html/index.php: present' || echo 'public_html/index.php: MISSING'"
+          ssh_run "grep -o \"repositories/avenue[^'\\\"]*\" '$PUBLIC_HTML/index.php' 2>/dev/null | sort -u || echo 'no repositories/avenue path reference found (review manually)'"
+
+          echo "### storage symlink"
+          ssh_run "if [ -L '$PUBLIC_HTML/storage' ]; then echo \"storage symlink present -> \$(readlink '$PUBLIC_HTML/storage')\"; else echo 'storage symlink: missing'; fi"
+
+          echo "### public_html top-level contents (names only)"
+          ssh_run "ls -1 '$PUBLIC_HTML'"
+
+          echo "----------------------------------------"
+          echo "SSH OK"
+          echo "USER OK"
+          echo "DEPLOY_PATH OK"
+          echo "PHP OK"
+          echo "COMPOSER OK"
+          echo "RSYNC OK"
+          echo "Smoke test completed. Review the log above for .env / index.php / storage-symlink findings before enabling production deploys."
