@@ -120,9 +120,23 @@ jobs:
           echo "USER OK"
 
           echo "### DEPLOY_PATH existence"
-          ssh_run "test -d '$DEPLOY_PATH'" \
-            && echo "DEPLOY_PATH OK" \
-            || { echo "::error::DEPLOY_PATH does not exist on server (see repo secret DEPLOY_PATH)"; exit 1; }
+          if ssh_run "test -d '$DEPLOY_PATH'"; then
+            echo "DEPLOY_PATH OK"
+          else
+            echo "::error::DEPLOY_PATH does not exist on server (see repo secret DEPLOY_PATH)"
+            # Read-only cross-check against the known documented application
+            # path (not derived from the secret) to tell apart "the secret
+            # value is wrong" from "the directory genuinely isn't there yet".
+            KNOWN_PATH="/home/$SSH_USER/repositories/avenue"
+            if ssh_run "test -d '$KNOWN_PATH'"; then
+              echo "::error::However, '$KNOWN_PATH' DOES exist on the server. The DEPLOY_PATH secret likely has a typo, wrong case, or stray whitespace/slash — compare it against this exact path."
+            else
+              echo "::error::'$KNOWN_PATH' also does not exist on the server. This looks like a genuinely fresh target, not a secret typo."
+            fi
+            ssh_run "ls -la '/home/$SSH_USER/' 2>&1 | head -30"
+            ssh_run "ls -la '/home/$SSH_USER/repositories/' 2>&1 | head -30 || echo 'no repositories/ directory under home'"
+            exit 1
+          fi
 
           echo "### PHP"
           ssh_run "php -v" && echo "PHP OK"
