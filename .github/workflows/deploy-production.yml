@@ -103,10 +103,29 @@ jobs:
           set -Eeuo pipefail
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          # Strip CR only (never LF) in case the key was pasted with Windows
-          # line endings — PEM/base64 never uses \r, so this is a pure fix.
-          printf '%s\n' "$SSH_KEY" | tr -d '\r' > ~/.ssh/deploy_key
+
+          # Normalize the key defensively without ever printing its content:
+          # 1) if the secret was pasted as a single line with literal "\n"
+          #    (backslash-n text) instead of real line breaks, expand those
+          #    into real newlines.
+          # 2) strip CR characters (Windows line endings) — PEM/base64 never
+          #    legitimately contains \r, so this is a pure fix either way.
+          printf '%s' "$SSH_KEY" > ~/.ssh/deploy_key.raw
+          RAW_LINES=$(wc -l < ~/.ssh/deploy_key.raw)
+          if [ "$RAW_LINES" -lt 2 ]; then
+            sed -i 's/\\r\\n/\n/g; s/\\n/\n/g' ~/.ssh/deploy_key.raw
+          fi
+          tr -d '\r' < ~/.ssh/deploy_key.raw > ~/.ssh/deploy_key
+          printf '\n' >> ~/.ssh/deploy_key
+          rm -f ~/.ssh/deploy_key.raw
           chmod 600 ~/.ssh/deploy_key
+
+          if ! ssh-keygen -y -f ~/.ssh/deploy_key -P "" > /dev/null 2>/tmp/keygen_err.txt; then
+            echo "::error::CPANEL_SSH_KEY could not be parsed as a valid private key — see error below"
+            cat /tmp/keygen_err.txt
+            exit 1
+          fi
+
           touch ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
           ssh-keyscan -T 15 -p "$CPANEL_PORT_S" -H "$CPANEL_HOST_S" >> ~/.ssh/known_hosts

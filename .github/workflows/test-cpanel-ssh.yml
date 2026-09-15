@@ -30,10 +30,50 @@ jobs:
 
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          # Strip CR only (never LF) in case the key was pasted with Windows
-          # line endings — PEM/base64 never uses \r, so this is a pure fix.
-          printf '%s\n' "$SSH_KEY" | tr -d '\r' > ~/.ssh/deploy_key
+
+          # Normalize the key defensively without ever printing its content:
+          # 1) if the secret was pasted as a single line with literal "\n"
+          #    (backslash-n text) instead of real line breaks — a common
+          #    artifact of some copy/paste or secret-import paths — expand
+          #    those into real newlines.
+          # 2) strip CR characters (Windows line endings) — PEM/base64 never
+          #    legitimately contains \r, so this is a pure fix either way.
+          printf '%s' "$SSH_KEY" > ~/.ssh/deploy_key.raw
+          RAW_LINES=$(wc -l < ~/.ssh/deploy_key.raw)
+          if [ "$RAW_LINES" -lt 2 ]; then
+            echo "::warning::CPANEL_SSH_KEY has only $RAW_LINES real newline(s); a multi-line PEM key should have many. Expanding literal backslash-n sequences into real newlines."
+            sed -i 's/\\r\\n/\n/g; s/\\n/\n/g' ~/.ssh/deploy_key.raw
+          fi
+          tr -d '\r' < ~/.ssh/deploy_key.raw > ~/.ssh/deploy_key
+          printf '\n' >> ~/.ssh/deploy_key
+          rm -f ~/.ssh/deploy_key.raw
           chmod 600 ~/.ssh/deploy_key
+
+          echo "### SSH key structural diagnostics (never prints key content)"
+          KEY_BYTES=$(wc -c < ~/.ssh/deploy_key)
+          KEY_LINES=$(wc -l < ~/.ssh/deploy_key)
+          echo "key file: $KEY_BYTES bytes, $KEY_LINES lines"
+          FIRST_LINE=$(head -n1 ~/.ssh/deploy_key)
+          LAST_LINE=$(tail -n2 ~/.ssh/deploy_key | head -n1)
+          case "$FIRST_LINE" in
+            -----BEGIN*-----) echo "first line looks like a PEM header: $FIRST_LINE";;
+            *) echo "::warning::first line does not look like a PEM header (length: ${#FIRST_LINE} chars — not printed)";;
+          esac
+          case "$LAST_LINE" in
+            -----END*-----) echo "last non-blank line looks like a PEM footer: $LAST_LINE";;
+            *) echo "::warning::last non-blank line does not look like a PEM footer (length: ${#LAST_LINE} chars — not printed)";;
+          esac
+
+          if ssh-keygen -y -f ~/.ssh/deploy_key -P "" > /tmp/derived_pub.txt 2>/tmp/keygen_err.txt; then
+            echo "ssh-keygen derived this public key from CPANEL_SSH_KEY (public keys are not secret):"
+            cat /tmp/derived_pub.txt
+            echo "^ Confirm this exact line is present in the server's ~/.ssh/authorized_keys for CPANEL_USER."
+          else
+            echo "::error::ssh-keygen could not parse CPANEL_SSH_KEY as a valid private key — see error below"
+            cat /tmp/keygen_err.txt
+            exit 1
+          fi
+
           touch ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
           ssh-keyscan -T 15 -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts
