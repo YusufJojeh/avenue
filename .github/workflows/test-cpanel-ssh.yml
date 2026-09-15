@@ -130,7 +130,13 @@ jobs:
           PUBLIC_HTML="/home/$SSH_USER/public_html"
 
           echo "### whoami / user identity"
-          ssh_run "whoami" >/dev/null && echo "SSH OK"
+          if ! WHOAMI_OUTPUT=$(ssh_run "whoami" 2>&1); then
+            echo "::error::SSH authentication was rejected by the server (publickey method failed). CPANEL_SSH_KEY parses correctly (confirmed above) and the host/port are reachable, so the private key itself is fine — this means its matching PUBLIC key is not currently authorized for CPANEL_USER on the server."
+            echo "::error::In cPanel: SSH Access -> Manage SSH Keys -> find this key -> Manage Authorization -> Authorize. Then re-run this workflow."
+            echo "::error::Raw SSH error: $WHOAMI_OUTPUT"
+            exit 1
+          fi
+          echo "SSH OK (remote whoami: $WHOAMI_OUTPUT)"
           echo "USER OK"
 
           echo "### DEPLOY_PATH existence"
