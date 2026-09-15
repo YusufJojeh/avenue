@@ -30,7 +30,9 @@ jobs:
 
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+          # Strip CR only (never LF) in case the key was pasted with Windows
+          # line endings — PEM/base64 never uses \r, so this is a pure fix.
+          printf '%s\n' "$SSH_KEY" | tr -d '\r' > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           touch ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
