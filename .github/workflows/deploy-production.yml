@@ -76,11 +76,29 @@ jobs:
       # ---------------------------------------------------------------
       # SSH setup
       # ---------------------------------------------------------------
+      - name: Load and sanitize cPanel connection config
+        env:
+          RAW_HOST: ${{ secrets.CPANEL_HOST }}
+          RAW_PORT: ${{ secrets.CPANEL_PORT }}
+          RAW_USER: ${{ secrets.CPANEL_USER }}
+          RAW_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          set -Eeuo pipefail
+          # Secrets occasionally pick up a stray trailing newline/space depending
+          # on how they were set (e.g. `gh secret set X < file.txt`). Strip that
+          # for these single-line values before they're used anywhere. Written
+          # to GITHUB_ENV, never echoed, so nothing here appears in the log.
+          sanitize() { printf '%s' "$1" | tr -d '\r\n' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'; }
+          {
+            echo "CPANEL_HOST_S=$(sanitize "$RAW_HOST")"
+            echo "CPANEL_PORT_S=$(sanitize "$RAW_PORT")"
+            echo "CPANEL_USER_S=$(sanitize "$RAW_USER")"
+            echo "DEPLOY_PATH_S=$(sanitize "$RAW_PATH")"
+          } >> "$GITHUB_ENV"
+
       - name: Configure SSH
         env:
           SSH_KEY: ${{ secrets.CPANEL_SSH_KEY }}
-          SSH_HOST: ${{ secrets.CPANEL_HOST }}
-          SSH_PORT: ${{ secrets.CPANEL_PORT }}
         run: |
           set -Eeuo pipefail
           mkdir -p ~/.ssh
@@ -89,7 +107,7 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           touch ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
-          ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          ssh-keyscan -T 15 -p "$CPANEL_PORT_S" -H "$CPANEL_HOST_S" >> ~/.ssh/known_hosts
           if [ ! -s ~/.ssh/known_hosts ]; then
             echo "::error::ssh-keyscan returned nothing — aborting before touching production"
             exit 1
@@ -99,28 +117,23 @@ jobs:
       # Pre-flight: refuse to deploy onto a broken .env setup
       # ---------------------------------------------------------------
       - name: Verify production .env is sane (existence only, never read contents)
-        env:
-          SSH_HOST: ${{ secrets.CPANEL_HOST }}
-          SSH_PORT: ${{ secrets.CPANEL_PORT }}
-          SSH_USER: ${{ secrets.CPANEL_USER }}
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
           set -Eeuo pipefail
-          SSH="ssh -i ~/.ssh/deploy_key -p $SSH_PORT -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes $SSH_USER@$SSH_HOST"
+          SSH="ssh -i ~/.ssh/deploy_key -p $CPANEL_PORT_S -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes $CPANEL_USER_S@$CPANEL_HOST_S"
 
-          HAS_DOTENV=$($SSH "cd '$DEPLOY_PATH' && test -f .env && echo yes || echo no")
-          HAS_LEGACY_ENV=$($SSH "cd '$DEPLOY_PATH' && test -f env && echo yes || echo no")
+          HAS_DOTENV=$($SSH "cd '$DEPLOY_PATH_S' && test -f .env && echo yes || echo no")
+          HAS_LEGACY_ENV=$($SSH "cd '$DEPLOY_PATH_S' && test -f env && echo yes || echo no")
 
           if [ "$HAS_DOTENV" = "no" ] && [ "$HAS_LEGACY_ENV" = "yes" ]; then
             echo "::error::Production .env configuration requires correction."
-            echo "A file literally named 'env' exists at $DEPLOY_PATH but '.env' does not."
+            echo "A file literally named 'env' exists at DEPLOY_PATH but '.env' does not."
             echo "This will NOT be auto-renamed. Fix it manually on the server, then re-run."
             exit 1
           fi
 
           if [ "$HAS_DOTENV" = "no" ]; then
             echo "::error::Production .env configuration requires correction."
-            echo "No .env file found at $DEPLOY_PATH — Laravel cannot boot without it. Refusing to deploy."
+            echo "No .env file found at DEPLOY_PATH — Laravel cannot boot without it. Refusing to deploy."
             exit 1
           fi
 
@@ -130,15 +143,10 @@ jobs:
       # Ship the exact checked-out commit to the application directory
       # ---------------------------------------------------------------
       - name: Sync application code to DEPLOY_PATH
-        env:
-          SSH_HOST: ${{ secrets.CPANEL_HOST }}
-          SSH_PORT: ${{ secrets.CPANEL_PORT }}
-          SSH_USER: ${{ secrets.CPANEL_USER }}
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
           set -Eeuo pipefail
           rsync -az --omit-dir-times \
-            -e "ssh -i ~/.ssh/deploy_key -p $SSH_PORT -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes" \
+            -e "ssh -i ~/.ssh/deploy_key -p $CPANEL_PORT_S -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes" \
             --exclude='.git/' \
             --exclude='.github/' \
             --exclude='.claude/' \
@@ -149,22 +157,17 @@ jobs:
             --exclude='.env' \
             --exclude='.env.*' \
             --exclude='.phpunit.result.cache' \
-            ./ "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/"
+            ./ "$CPANEL_USER_S@$CPANEL_HOST_S:$DEPLOY_PATH_S/"
 
       # ---------------------------------------------------------------
       # Server-side: dependencies, migrations, cache (maintenance-mode wrapped)
       # ---------------------------------------------------------------
       - name: Install server-side Composer dependencies, migrate, and cache
-        env:
-          SSH_HOST: ${{ secrets.CPANEL_HOST }}
-          SSH_PORT: ${{ secrets.CPANEL_PORT }}
-          SSH_USER: ${{ secrets.CPANEL_USER }}
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
           set -Eeuo pipefail
-          ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" \
+          ssh -i ~/.ssh/deploy_key -p "$CPANEL_PORT_S" \
               -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes \
-              "$SSH_USER@$SSH_HOST" bash -s -- "$DEPLOY_PATH" <<'REMOTE_SCRIPT'
+              "$CPANEL_USER_S@$CPANEL_HOST_S" bash -s -- "$DEPLOY_PATH_S" <<'REMOTE_SCRIPT'
           set -Eeuo pipefail
           DEPLOY_PATH="$1"
           cd "$DEPLOY_PATH"
@@ -214,32 +217,22 @@ jobs:
           REMOTE_SCRIPT
 
       - name: Record deployed commit
-        env:
-          SSH_HOST: ${{ secrets.CPANEL_HOST }}
-          SSH_PORT: ${{ secrets.CPANEL_PORT }}
-          SSH_USER: ${{ secrets.CPANEL_USER }}
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
           set -Eeuo pipefail
-          ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" \
+          ssh -i ~/.ssh/deploy_key -p "$CPANEL_PORT_S" \
               -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes \
-              "$SSH_USER@$SSH_HOST" \
-              "echo '$GITHUB_SHA' > '$DEPLOY_PATH/.deployed_commit'"
+              "$CPANEL_USER_S@$CPANEL_HOST_S" \
+              "echo '$GITHUB_SHA' > '$DEPLOY_PATH_S/.deployed_commit'"
 
       # ---------------------------------------------------------------
       # Public web root: allowlisted, non-destructive static asset sync
       # ---------------------------------------------------------------
       - name: Sync public assets into public_html (allowlist only)
-        env:
-          SSH_HOST: ${{ secrets.CPANEL_HOST }}
-          SSH_PORT: ${{ secrets.CPANEL_PORT }}
-          SSH_USER: ${{ secrets.CPANEL_USER }}
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
           set -Eeuo pipefail
-          ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" \
+          ssh -i ~/.ssh/deploy_key -p "$CPANEL_PORT_S" \
               -o UserKnownHostsFile=~/.ssh/known_hosts -o BatchMode=yes \
-              "$SSH_USER@$SSH_HOST" bash -s -- "$DEPLOY_PATH" <<'REMOTE_SCRIPT'
+              "$CPANEL_USER_S@$CPANEL_HOST_S" bash -s -- "$DEPLOY_PATH_S" <<'REMOTE_SCRIPT'
           set -Eeuo pipefail
           DEPLOY_PATH="$1"
           PUBLIC_HTML="/home/$(whoami)/public_html"

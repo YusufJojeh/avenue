@@ -21,13 +21,19 @@ jobs:
           SSH_PORT: ${{ secrets.CPANEL_PORT }}
         run: |
           set -Eeuo pipefail
+          # Secrets occasionally pick up a stray trailing newline/space depending
+          # on how they were set (e.g. `gh secret set X < file.txt`). Strip that
+          # for single-line values. Never do this to SSH_KEY — it's a multi-line
+          # PEM block and internal newlines are structural, not stray.
+          SSH_HOST="$(printf '%s' "$SSH_HOST" | tr -d '\r\n' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+          SSH_PORT="$(printf '%s' "$SSH_PORT" | tr -d '\r\n' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
           printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           touch ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
-          echo "Diagnostic: SSH_HOST length=${#SSH_HOST} SSH_PORT='$SSH_PORT'"
           ssh-keyscan -T 15 -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts
           if [ ! -s ~/.ssh/known_hosts ]; then
             echo "::error::ssh-keyscan returned nothing — host/port unreachable or wrong"
@@ -42,6 +48,11 @@ jobs:
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
           set -Eeuo pipefail
+          sanitize() { printf '%s' "$1" | tr -d '\r\n' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'; }
+          SSH_HOST="$(sanitize "$SSH_HOST")"
+          SSH_PORT="$(sanitize "$SSH_PORT")"
+          SSH_USER="$(sanitize "$SSH_USER")"
+          DEPLOY_PATH="$(sanitize "$DEPLOY_PATH")"
 
           ssh_run() {
             ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" \
@@ -53,14 +64,13 @@ jobs:
           PUBLIC_HTML="/home/$SSH_USER/public_html"
 
           echo "### whoami / user identity"
-          REMOTE_USER=$(ssh_run "whoami")
-          echo "SSH OK — connected as: $REMOTE_USER"
+          ssh_run "whoami" >/dev/null && echo "SSH OK"
           echo "USER OK"
 
           echo "### DEPLOY_PATH existence"
           ssh_run "test -d '$DEPLOY_PATH'" \
-            && echo "DEPLOY_PATH OK ($DEPLOY_PATH exists)" \
-            || { echo "::error::DEPLOY_PATH does not exist on server: $DEPLOY_PATH"; exit 1; }
+            && echo "DEPLOY_PATH OK" \
+            || { echo "::error::DEPLOY_PATH does not exist on server (see repo secret DEPLOY_PATH)"; exit 1; }
 
           echo "### PHP"
           ssh_run "php -v" && echo "PHP OK"
