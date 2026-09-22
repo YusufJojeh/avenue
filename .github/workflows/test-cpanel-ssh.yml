@@ -213,6 +213,13 @@ jobs:
           echo "### LiteSpeed / web-server direct filesystem read check via public_html/storage"
           ssh_run "ls -la '$PUBLIC_HTML/storage/categories' 2>&1 | tail -20 || echo 'cannot list public_html/storage/categories'"
 
+          echo "### public_html/.htaccess (no secrets in this file, routing rules only)"
+          ssh_run "cat '$PUBLIC_HTML/.htaccess' 2>&1 || echo 'no .htaccess at public_html root'"
+
+          echo "### public_html/storage lstat vs stat (symlink resolution)"
+          ssh_run "cd '$PUBLIC_HTML' && stat storage 2>&1"
+          ssh_run "cd '$PUBLIC_HTML' && stat -L storage/categories/file-00000000663481f4b76ea7b37b97ebb8_2026-09-22_16-24-14_g0cJ0UKh.png 2>&1 || echo 'stat -L via public_html/storage FAILED'"
+
           echo "----------------------------------------"
           echo "SSH OK"
           echo "USER OK"
