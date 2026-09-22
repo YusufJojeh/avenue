@@ -202,6 +202,17 @@ jobs:
           echo "### public_html top-level contents (names only)"
           ssh_run "ls -1 '$PUBLIC_HTML'"
 
+          echo "### storage/app/public/categories contents and permissions"
+          ssh_run "cd '$DEPLOY_PATH' && { test -d storage/app/public/categories && ls -la storage/app/public/categories | tail -20 || echo 'categories/ directory MISSING under storage/app/public'; }"
+          ssh_run "cd '$DEPLOY_PATH' && stat -c '%U:%G %a %n' storage storage/app storage/app/public storage/app/public/categories 2>&1 || true"
+
+          echo "### specific known test files"
+          ssh_run "cd '$DEPLOY_PATH' && find storage/app/public/categories -type f -iname '*663481f4b76ea7b37b97ebb8*' -exec ls -la {} \; 2>&1 || echo 'not found'"
+          ssh_run "cd '$DEPLOY_PATH' && find storage/app/public/categories -type f -iname '*75f081fa8b8e6b9b9cf34469*' -exec ls -la {} \; 2>&1 || echo 'not found'"
+
+          echo "### LiteSpeed / web-server direct filesystem read check via public_html/storage"
+          ssh_run "ls -la '$PUBLIC_HTML/storage/categories' 2>&1 | tail -20 || echo 'cannot list public_html/storage/categories'"
+
           echo "----------------------------------------"
           echo "SSH OK"
           echo "USER OK"
