@@ -236,6 +236,9 @@ jobs:
           ssh_run "cd '$PUBLIC_HTML' && rm -f storage-symlink-probe.txt"
           ssh_run "cd '$PUBLIC_HTML/storage' && rm -f probe-through-symlink.txt"
 
+          echo "### tail of storage/logs/laravel.log (last 40 lines, for new errors only)"
+          ssh_run "cd '$DEPLOY_PATH' && { test -f storage/logs/laravel.log && tail -40 storage/logs/laravel.log || echo 'no storage/logs/laravel.log found'; }"
+
           echo "----------------------------------------"
           echo "SSH OK"
           echo "USER OK"
