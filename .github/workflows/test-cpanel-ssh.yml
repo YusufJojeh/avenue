@@ -220,6 +220,22 @@ jobs:
           ssh_run "cd '$PUBLIC_HTML' && stat storage 2>&1"
           ssh_run "cd '$PUBLIC_HTML' && stat -L storage/categories/file-00000000663481f4b76ea7b37b97ebb8_2026-09-22_16-24-14_g0cJ0UKh.png 2>&1 || echo 'stat -L via public_html/storage FAILED'"
 
+          echo "### trigger a fresh 404 then check for a web-server-level explanation"
+          curl -sS -o /dev/null "https://avenuebrand.online/storage/categories/file-00000000663481f4b76ea7b37b97ebb8_2026-09-22_16-24-14_g0cJ0UKh.png" || true
+          ssh_run "find /home/\$(whoami)/logs -maxdepth 1 -iname '*avenuebrand*' -o -iname '*error*' 2>/dev/null | head -20"
+          ssh_run "for f in /home/\$(whoami)/logs/*error*; do [ -f \"\$f\" ] && echo \"--- \$f ---\" && tail -15 \"\$f\"; done 2>&1 || echo 'no per-account error logs found under ~/logs'"
+
+          echo "### open_basedir / symlink protection hints from phpinfo (cli, informational)"
+          ssh_run "php -i 2>/dev/null | grep -i 'open_basedir\|symlink' || echo 'no relevant php.ini directives found via cli'"
+
+          echo "### isolate: does ANY request crossing the public_html/storage symlink get served statically?"
+          ssh_run "cd '$PUBLIC_HTML' && echo diagnostic-probe > storage-symlink-probe.txt 2>&1"
+          curl -sS -o /dev/null -w 'control - real file at public_html root: HTTP %{http_code}\n' "https://avenuebrand.online/storage-symlink-probe.txt" || true
+          ssh_run "cd '$PUBLIC_HTML/storage' && echo diagnostic-probe > probe-through-symlink.txt 2>&1"
+          curl -sS -o /dev/null -w 'test - file written through storage symlink: HTTP %{http_code}\n' "https://avenuebrand.online/storage/probe-through-symlink.txt" || true
+          ssh_run "cd '$PUBLIC_HTML' && rm -f storage-symlink-probe.txt"
+          ssh_run "cd '$PUBLIC_HTML/storage' && rm -f probe-through-symlink.txt"
+
           echo "----------------------------------------"
           echo "SSH OK"
           echo "USER OK"
