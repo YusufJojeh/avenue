@@ -17,6 +17,7 @@ jobs:
       - name: Configure SSH
         env:
           SSH_KEY: ${{ secrets.CPANEL_SSH_KEY }}
+          SSH_KEY_PASSPHRASE: ${{ secrets.CPANEL_SSH_KEY_PASSPHRASE }}
           SSH_HOST: ${{ secrets.CPANEL_HOST }}
           SSH_PORT: ${{ secrets.CPANEL_PORT }}
         run: |
@@ -70,6 +71,19 @@ jobs:
           BEGIN_COUNT=$(grep -c '^-----BEGIN.*-----$' ~/.ssh/deploy_key || true)
           END_COUNT=$(grep -c '^-----END.*-----$' ~/.ssh/deploy_key || true)
           echo "PEM marker check: $BEGIN_COUNT BEGIN line(s), $END_COUNT END line(s) found (expect exactly 1 each)"
+
+          # If CPANEL_SSH_KEY is passphrase-protected, strip the passphrase
+          # now so every later `ssh -i ~/.ssh/deploy_key` call (which relies
+          # on BatchMode=yes and cannot prompt) can use it directly. The
+          # decrypted key only ever exists on this ephemeral runner. Mirrors
+          # the fix already applied in deploy-production.yml.
+          if [ -n "$SSH_KEY_PASSPHRASE" ]; then
+            if ! ssh-keygen -p -P "$SSH_KEY_PASSPHRASE" -N "" -f ~/.ssh/deploy_key > /tmp/keygen_strip.txt 2>&1; then
+              echo "::error::CPANEL_SSH_KEY_PASSPHRASE did not unlock CPANEL_SSH_KEY — see error below"
+              cat /tmp/keygen_strip.txt
+              exit 1
+            fi
+          fi
 
           if ssh-keygen -y -f ~/.ssh/deploy_key -P "" > /tmp/derived_pub.txt 2>/tmp/keygen_err.txt; then
             echo "ssh-keygen derived this public key from CPANEL_SSH_KEY (public keys are not secret):"
