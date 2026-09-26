@@ -24,8 +24,14 @@ class ViewServiceProvider extends ServiceProvider
         // Share site settings with all views
         View::composer('*', function ($view) {
             try {
-                // Load shared settings once per rendered response.
-                $settings = Setting::query()->pluck('value', 'key')->all();
+                // Memoized per request: View::composer('*') fires on every Blade
+                // view/partial/component render, not once per HTTP response. Without
+                // this cache, an admin list page rendering hundreds of row/cell
+                // partials issued hundreds of identical `settings` table scans.
+                static $settings = null;
+                if ($settings === null) {
+                    $settings = Setting::query()->pluck('value', 'key')->all();
+                }
                 $siteName = $settings['site.name'] ?? 'MyStore';
                 
                 // Parse JSON settings
