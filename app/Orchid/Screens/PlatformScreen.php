@@ -8,6 +8,7 @@ use App\Models\Offer;
 use App\Models\Product;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Fields\Input;
@@ -40,12 +41,14 @@ class PlatformScreen extends Screen
         }
 
         return [
-            'stats' => [
+            // Cached for 5 minutes: these are plain counts, not covered by
+            // EnhancedPerformanceService, and were re-run on every dashboard load.
+            'stats' => Cache::remember('platform.dashboard.stats', 300, fn () => [
                 'products' => Product::count(),
                 'categories' => Category::count(),
                 'brands' => Brand::count(),
                 'offers' => Offer::count(),
-            ],
+            ]),
             // Demo data used by dashboard partial. Replace with real reporting later.
             'sales' => $this->demoSales(app()->getLocale()),
             'social_media' => [

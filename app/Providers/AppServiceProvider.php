@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Observers\ProductObserver;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -40,7 +41,10 @@ class AppServiceProvider extends ServiceProvider
         });
 
         view()->composer('layouts.app', function ($view) {
-            $navCategories = Category::active()
+            // Cached for 5 minutes: runs on every storefront page render via
+            // the layout composer, but the underlying category/product data
+            // changes infrequently relative to page traffic.
+            $navCategories = Cache::remember('layout.nav_categories', 300, fn () => Category::active()
                 ->withCount('products')
                 ->with([
                     'products' => fn ($query) => $query->active()
@@ -51,7 +55,7 @@ class AppServiceProvider extends ServiceProvider
                 ])
                 ->orderByDesc('products_count')
                 ->limit(8)
-                ->get();
+                ->get());
 
             $view->with('navSearchCategories', $navCategories);
             $view->with('navMegaCategories', $navCategories->take(6));

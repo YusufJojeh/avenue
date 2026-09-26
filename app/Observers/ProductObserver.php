@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Product;
 use App\Services\EnhancedPerformanceService;
+use Illuminate\Support\Facades\Cache;
 
 class ProductObserver
 {
@@ -29,6 +30,8 @@ class ProductObserver
     private function invalidateCache(): void
     {
         $this->performance->clearCache('products');
+        Cache::forget('platform.dashboard.stats');
+        Cache::forget('layout.nav_categories');
     }
 }
 
